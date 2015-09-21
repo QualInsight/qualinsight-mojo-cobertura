@@ -19,23 +19,9 @@ After having analyzed different approaches to tackle these issues, we decided to
 * Coverage report conversion to SonarQube generic coverage format
 * Seamless integration with your regular reactor build (single tests execution, simple configuration)
 
-## Advantages over the maven-cobertura-plugin ##
-
-Unlike the [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) this plugin does not run UT and IT tests in his own lifecycle. Code is instrumented before tests execution and coverage is calculated during the ``test`` and ``integration-test`` lifecycle phases of your regular reactor build. 
-
-As a result, the main advantage of this approach is that tests are only executed once.
-
-## Current Version ##
-
-Current version is ``1.0.0``. It can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/1.0.0/qualinsight-mojo-cobertura-core-1.0.0.jar).
-
-## Requirements ##
-
-* Java 1.7
-
 ## Plugin goals and options ##
 
-In order to use this plugin goals must be configured for both cobertura code instrumentation and reporting.
+In order to use the ``qualinsight-mojo-cobertura-core`` plugin, goals must be configured for both cobertura code instrumentation and reporting.
 
 ### Instrumentation ###
 
@@ -83,6 +69,10 @@ These two instrumentation goals have the following configuration options.
 | transformToSonarQubeOutput      | ``true``                                                   | false      | Should the report be converted to SonarQube generic coverage format ? (requires 'xml' format) |
 
 ## Plugin usage ##
+
+Current version is ``1.0.0``. It can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/).
+
+**Note**: the plugin requires to be run with Java 1.7+.
 
 ### Step 1: declare plugin ###
 
@@ -143,7 +133,20 @@ Run your build with your regular UT and IT tests execution configuration. That's
 
 By default, the ``transformToSonarQubeOutput`` option of the ``report-ut-coverage`` and ``report-it-coverage`` goals is set to ``true``. This results in the conversion of regular Cobertura ``coverage.xml`` reports to a format the [SonarQube Generic Test Coverage](http://docs.sonarqube.org/display/PLUG/Generic+Test+Coverage) plugin for SonarQube is able to read. This allows you then to directly use your Cobertura UT and IT coverage reports in SonarQube while keeping UT and IT coverage information separated.
 
-The name of the converted coverage report file is ``converted-coverage.xml`` and is located in the directory specified by the ``destinationDirectoryPath`` option of the reporting goals (``${project.build.directory}/cobertura/ut/converted-coverage.xml`` for UT coverage, and ``${project.build.directory}/cobertura/it/converted-coverage.xml`` for IT coverage.) 
+The name of the converted coverage report file is ``converted-coverage.xml`` and is located in the directory specified by the ``destinationDirectoryPath`` option of the reporting goals, i.e: 
+
+* ``${project.build.directory}/cobertura/ut/converted-coverage.xml`` for UT coverage
+* ``${project.build.directory}/cobertura/it/converted-coverage.xml`` for IT coverage 
+
+## How does the qualinsight-mojo-cobertura-core plugin compare to the cobertura-maven-plugin ? ##
+
+Unlike the [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) the ``qualinsight-mojo-cobertura-core`` plugin does not run UT and IT tests in his own lifecycle and does not use Cobertura executable, but directly calls Cobertura API to instrument code before tests execution. 
+
+This allows to calculate coverage during the ``test`` and ``integration-test`` lifecycle phases of your regular reactor build, and to execute tests only executed once.
+
+Further, the ``qualinsight-mojo-cobertura-core`` plugin is able to convert Cobertura xml reports to SonarQube generic test coverage plugin format to benefit from UT and IT coverage measures separation in SonarQube.
+
+The only limitation of the ``qualinsight-mojo-cobertura-core`` plugin compared to the ``cobertura-maven-plugin`` is that it does not currently have a report merging feature nor coverage check feature. However these features will be added in a later release.
 
 ## Build status
 
