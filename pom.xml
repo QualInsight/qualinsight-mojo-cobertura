@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.qualinsight.core</groupId>
+    <artifactId>qualinsight-core-parent</artifactId>
+    <version>1.0.2</version>
+  </parent>
+  <groupId>com.qualinsight.mojo.cobertura</groupId>
+  <artifactId>qualinsight-mojo-cobertura</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <description>Cobertura maven plugin with report conversion to SonarQube generic coverage format.</description>
+  <url>https://github.com/QualInsight/qualinsight-mojo-cobertura</url>
+  <organization>
+    <url>http://www.qualinsight.com/</url>
+    <name>QualInsight</name>
+  </organization>
+  <inceptionYear>2015</inceptionYear>
+  <licenses>
+    <license>
+      <name>The GNU Lesser General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>pawlakm</id>
+      <name>Michel Pawlak</name>
+      <organization>QualInsight</organization>
+      <organizationUrl>http://www.qualinsight.com/</organizationUrl>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Sami Stirling</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+  </contributors>
+  <scm>
+    <connection>scm:git:git@github.com:QualInsight/qualinsight-mojo-cobertura.git</connection>
+    <developerConnection>scm:git:git@github.com:QualInsight/qualinsight-mojo-cobertura.git</developerConnection>
+    <url>https://github.com/QualInsight/qualinsight-mojo-cobertura.git</url>
+    <tag>HEAD</tag>
+  </scm>
+  <properties>
+    <lib.version.cobertura>2.1.1</lib.version.cobertura>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.qualinsight.mojo.cobertura</groupId>
+        <artifactId>qualinsight-mojo-cobertura-conversion</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sourceforge.cobertura</groupId>
+        <artifactId>cobertura</artifactId>
+        <version>${lib.version.cobertura}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <packaging>pom</packaging>
+  <modules>
+    <module>core</module>
+    <module>conversion</module>
+  </modules>
+</project>
