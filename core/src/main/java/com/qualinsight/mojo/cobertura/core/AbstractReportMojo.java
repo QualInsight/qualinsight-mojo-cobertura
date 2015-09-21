@@ -67,46 +67,75 @@ abstract class AbstractReportMojo extends AbstractMojo {
         final File baseDirectory = new File(this.baseDirectoryPath);
         final File destinationDataFile = new File(getDestinationDirectoryPath() + AbstractInstrumentationMojo.BASE_DATA_FILE);
         final File destinationDirectory = new File(getDestinationDirectoryPath());
-        final File classesDirectoryPath = new File(this.classesDirectoryPath);
+        final File classesDirectory = new File(this.classesDirectoryPath);
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
+        prepareDirectories(destinationDirectory);
+        processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
+        cleanupDirectories(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
+        if (this.convertToSonarQubeOutput) {
+            if (this.format.equalsIgnoreCase("xml")) {
+                convertReport();
+            } else {
+                getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
+            }
+        }
+    }
+
+    private void convertReport() throws MojoExecutionException {
+        getLog().debug("Converting Cobertura report to SonarQube generic test coverage report format");
+        final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE);
+        final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE);
         try {
-            Files.createDirectories(destinationDirectory.toPath());
-            final ArgumentsBuilder builder = new ArgumentsBuilder();
-            final Arguments arguments = builder.setBaseDirectory(baseDirectory.getAbsolutePath())
-                .setDestinationDirectory(destinationDirectory.getAbsolutePath())
-                .setDataFile(baseDataFile.getAbsolutePath())
-                .setEncoding(this.encoding)
-                .calculateMethodComplexity(this.calculateMethodComplexity)
-                .build();
-            final Cobertura cobertura = new Cobertura(arguments);
-            final Report report = cobertura.report();
-            report.export(ReportFormat.getFromString(this.format));
-        } catch (final IOException e) {
-            final String message = "An error occured during directories preparation: ";
+            new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
+                .withOuputFile(conversionOutputFile)
+                .process();
+        } catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
+            final String message = "An error occurred during coverage output conversion: ";
             getLog().error(message, e);
             throw new MojoExecutionException(message, e);
         }
+    }
+
+    private void cleanupDirectories(final File classesDirectory, final File backupClassesDirectory, final File baseDataFile, final File destinationDataFile) throws MojoExecutionException {
+        getLog().debug("Cleaning up directories after Cobertura report generation");
         try {
-            if (classesDirectoryPath.exists()) {
-                FileUtils.forceDelete(classesDirectoryPath);
+            if (classesDirectory.exists()) {
+                FileUtils.forceDelete(classesDirectory);
             }
-            FileUtils.moveDirectory(backupClassesDirectory, classesDirectoryPath);
+            FileUtils.moveDirectory(backupClassesDirectory, classesDirectory);
             FileUtils.moveFile(baseDataFile, destinationDataFile);
-            if (this.convertToSonarQubeOutput) {
-                final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE);
-                final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE);
-                try {
-                    new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
-                        .withOuputFile(conversionOutputFile)
-                        .process();
-                } catch (SAXException | TransformerException | ParserConfigurationException e) {
-                    final String message = "An error occurred during coverage output conversion: ";
-                    getLog().error(message, e);
-                    throw new MojoExecutionException(message, e);
-                }
-            }
         } catch (final IOException e) {
             final String message = "An error occurred during directories cleanup: ";
+            getLog().error(message, e);
+            throw new MojoExecutionException(message, e);
+        }
+    }
+
+    private void processReporting(final Arguments arguments) {
+        getLog().debug("Generating Cobertura report");
+        final Cobertura cobertura = new Cobertura(arguments);
+        final Report report = cobertura.report();
+        report.export(ReportFormat.getFromString(this.format));
+    }
+
+    private Arguments buildReportingArguments(final File baseDirectory, final File destinationDirectory, final File baseDataFile) {
+        getLog().debug("Building Cobertura report generation arguments");
+        final ArgumentsBuilder builder = new ArgumentsBuilder();
+        final Arguments arguments = builder.setBaseDirectory(baseDirectory.getAbsolutePath())
+            .setDestinationDirectory(destinationDirectory.getAbsolutePath())
+            .setDataFile(baseDataFile.getAbsolutePath())
+            .setEncoding(this.encoding)
+            .calculateMethodComplexity(this.calculateMethodComplexity)
+            .build();
+        return arguments;
+    }
+
+    private void prepareDirectories(final File destinationDirectory) throws MojoExecutionException {
+        getLog().debug("Preparing Cobertura report generation directories");
+        try {
+            Files.createDirectories(destinationDirectory.toPath());
+        } catch (final IOException e) {
+            final String message = "An error occured during directories preparation: ";
             getLog().error(message, e);
             throw new MojoExecutionException(message, e);
         }

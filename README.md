@@ -70,7 +70,7 @@ These two instrumentation goals have the following configuration options.
 
 ## Plugin usage ##
 
-Current version is ``1.0.0``. It can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/).
+Current version is ``1.0.1``. It can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/).
 
 **Note**: the plugin requires to be run with Java 1.7+.
 
@@ -82,7 +82,7 @@ The declaration of the plugin is as easy as follows.
   <plugin>
     <groupId>com.qualinsight.mojo.cobertura</groupId>
     <artifactId>qualinsight-mojo-cobertura-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <executions>
       <execution>
         <id>instrument-ut</id>
