@@ -25,6 +25,10 @@ Unlike the [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plug
 
 As a result, the main advantage of this approach is that tests are only executed once.
 
+## Current Version ##
+
+Current version is ``1.0.0``. It can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/1.0.0/qualinsight-mojo-cobertura-core-1.0.0.jar).
+
 ## Requirements ##
 
 * Java 1.7
@@ -88,7 +92,7 @@ The declaration of the plugin is as easy as follows.
   <plugin>
     <groupId>com.qualinsight.mojo.cobertura</groupId>
     <artifactId>qualinsight-mojo-cobertura-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <executions>
       <execution>
         <id>instrument-ut</id>
