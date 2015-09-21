@@ -73,7 +73,11 @@ abstract class AbstractReportMojo extends AbstractMojo {
         processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
         cleanupDirectories(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
         if (this.convertToSonarQubeOutput) {
-            convertReport();
+            if (this.format.equalsIgnoreCase("xml")) {
+                convertReport();
+            } else {
+                getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
+            }
         }
     }
 
