@@ -75,19 +75,14 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
         final File destinationDirectory = new File(this.destinationDirectoryPath);
         final File baseDataFile = new File(BASE_DATA_FILE);
-        try {
-            if (backupClassesDirectory.exists()) {
-                FileUtils.forceDelete(backupClassesDirectory);
-            }
-            FileUtils.copyDirectory(classesDirectory, backupClassesDirectory);
-            Files.deleteIfExists(baseDataFile.toPath());
-        } catch (final IOException e) {
-            final String message = "An error occured during directories preparation:";
-            getLog().error(message, e);
-            throw new MojoExecutionException(message, e);
-        }
+        prepareDirectories(classesDirectory, backupClassesDirectory, baseDataFile);
+        processInstrumentation(buildInstrumentationArguments(classesDirectory, destinationDirectory, baseDataFile));
+    }
 
+    private Arguments buildInstrumentationArguments(final File classesDirectory, final File destinationDirectory, final File baseDataFile) {
+        getLog().debug("Building Cobertura instrumentation execution arguments");
         ArgumentsBuilder builder = new ArgumentsBuilder();
+        // Mandatory arguments
         builder = builder.setBaseDirectory(classesDirectory.getAbsolutePath())
             .setDestinationDirectory(destinationDirectory.getAbsolutePath())
             .setDataFile(baseDataFile.getAbsolutePath())
@@ -96,6 +91,7 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
             .failOnError(this.failOnError)
             .threadsafeRigorous(this.threadsafeRigorous)
             .addFileToInstrument(classesDirectory.getAbsolutePath());
+        // Optional arguments
         if (!StringUtils.isBlank(this.ignoreRegularExpression)) {
             builder = builder.addIgnoreRegex(this.ignoreRegularExpression);
         }
@@ -111,7 +107,26 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
         if (!StringUtils.isBlank(this.excludeClassesRegularExpression)) {
             builder = builder.addExcludeClassesRegex(this.excludeClassesRegularExpression);
         }
-        final Arguments arguments = builder.build();
+        return builder.build();
+    }
+
+    private void prepareDirectories(final File classesDirectory, final File backupClassesDirectory, final File baseDataFile) throws MojoExecutionException {
+        getLog().debug("Preparing Cobertura instrumentation directories");
+        try {
+            if (backupClassesDirectory.exists()) {
+                FileUtils.forceDelete(backupClassesDirectory);
+            }
+            FileUtils.copyDirectory(classesDirectory, backupClassesDirectory);
+            Files.deleteIfExists(baseDataFile.toPath());
+        } catch (final IOException e) {
+            final String message = "An error occured during directories preparation:";
+            getLog().error(message, e);
+            throw new MojoExecutionException(message, e);
+        }
+    }
+
+    private void processInstrumentation(final Arguments arguments) throws MojoExecutionException {
+        getLog().debug("Instrumenting code with Cobertura");
         try {
             new Cobertura(arguments).instrumentCode()
                 .saveProjectData();
@@ -120,7 +135,6 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
             getLog().error(message, e);
             throw new MojoExecutionException(message, e);
         }
-
     }
 
 }
