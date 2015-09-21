@@ -36,11 +36,11 @@
     <xsl:choose>
       <xsl:when test="@condition-coverage">
         <xsl:variable name="COVERAGE_SEPARATOR">/</xsl:variable>
-        <xsl:variable name="COVERAGE" select="translate(translate(substring-after(normalize-space(@condition-coverage), '%'), ')', ''),  '(', '')" />
-        <lineToCover lineNumber="{@number}" coverred="{boolean(@hits &gt; 0)}" branchesToCover="{substring-after($COVERAGE, $COVERAGE_SEPARATOR)}" coveredBranches="{substring-before($COVERAGE, $COVERAGE_SEPARATOR)}" />
+        <xsl:variable name="COVERAGE" select="translate(translate(substring-after(normalize-space(@condition-coverage), '% '), ')', ''), '(', '')" />
+        <lineToCover lineNumber="{@number}" covered="{boolean(@hits &gt; 0)}" branchesToCover="{substring-after($COVERAGE, $COVERAGE_SEPARATOR)}" coveredBranches="{substring-before($COVERAGE, $COVERAGE_SEPARATOR)}" />
       </xsl:when>
       <xsl:otherwise>
-        <lineToCover lineNumber="{@number}" coverred="{boolean(@hits &gt; 0)}" />
+        <lineToCover lineNumber="{@number}" covered="{boolean(@hits &gt; 0)}" />
       </xsl:otherwise>
     </xsl:choose>
     <xsl:value-of select="$CR" />
