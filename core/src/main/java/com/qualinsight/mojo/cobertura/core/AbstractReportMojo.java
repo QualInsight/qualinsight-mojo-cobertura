@@ -72,12 +72,6 @@ abstract class AbstractReportMojo extends AbstractMojo {
         final File destinationDirectory = new File(getDestinationDirectoryPath());
         final File classesDirectory = new File(this.classesDirectoryPath);
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
-        System.err.println(baseDataFile.getAbsolutePath());
-        System.err.println(baseDirectory.getAbsolutePath());
-        System.err.println(destinationDataFile.getAbsolutePath());
-        System.err.println(destinationDirectory.getAbsolutePath());
-        System.err.println(classesDirectory.getAbsolutePath());
-        System.err.println(backupClassesDirectory.getAbsolutePath());
         if (classesDirectory.exists() && classesDirectory.isDirectory()) {
             prepareDirectories(destinationDirectory);
             processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
