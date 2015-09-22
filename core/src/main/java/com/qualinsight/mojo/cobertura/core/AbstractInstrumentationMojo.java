@@ -31,7 +31,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
-    public static final String BASE_DATA_FILE = "cobertura.ser";
+    public static final String BASE_DATA_FILE_NAME = "cobertura.ser";
+
+    @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
+    private String projectDirectoryPath;
 
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
     private String classesDirectoryPath;
@@ -74,9 +77,13 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
         final File classesDirectory = new File(this.classesDirectoryPath);
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
         final File destinationDirectory = new File(this.destinationDirectoryPath);
-        final File baseDataFile = new File(BASE_DATA_FILE);
-        prepareDirectories(classesDirectory, backupClassesDirectory, baseDataFile);
-        processInstrumentation(buildInstrumentationArguments(classesDirectory, destinationDirectory, baseDataFile));
+        final File baseDataFile = new File(this.projectDirectoryPath + BASE_DATA_FILE_NAME);
+        if (classesDirectory.exists() && classesDirectory.isDirectory()) {
+            prepareDirectories(classesDirectory, backupClassesDirectory, baseDataFile);
+            processInstrumentation(buildInstrumentationArguments(classesDirectory, destinationDirectory, baseDataFile));
+        } else {
+            getLog().info("Directory containing classes to instrument does not exist, skipping execution.");
+        }
     }
 
     private Arguments buildInstrumentationArguments(final File classesDirectory, final File destinationDirectory, final File baseDataFile) {
