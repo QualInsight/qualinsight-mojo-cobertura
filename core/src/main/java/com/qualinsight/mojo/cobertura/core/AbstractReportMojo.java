@@ -36,9 +36,12 @@ import com.qualinsight.mojo.cobertura.transformation.CoberturaToSonarQubeCoverag
 
 abstract class AbstractReportMojo extends AbstractMojo {
 
-    public static final String BASE_COVERAGE_FILE = "coverage.xml";
+    public static final String BASE_COVERAGE_FILE_NAME = "coverage.xml";
 
-    public static final String CONVERTED_COVERAGE_FILE = "converted-coverage.xml";
+    public static final String CONVERTED_COVERAGE_FILE_NAME = "converted-coverage.xml";
+
+    @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
+    private String projectDirectoryPath;
 
     @Parameter(defaultValue = "${project.basedir}/src/main/", required = false)
     private String baseDirectoryPath;
@@ -63,28 +66,38 @@ abstract class AbstractReportMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final File baseDataFile = new File(AbstractInstrumentationMojo.BASE_DATA_FILE);
+        final File baseDataFile = new File(this.projectDirectoryPath + AbstractInstrumentationMojo.BASE_DATA_FILE_NAME);
         final File baseDirectory = new File(this.baseDirectoryPath);
-        final File destinationDataFile = new File(getDestinationDirectoryPath() + AbstractInstrumentationMojo.BASE_DATA_FILE);
+        final File destinationDataFile = new File(getDestinationDirectoryPath() + AbstractInstrumentationMojo.BASE_DATA_FILE_NAME);
         final File destinationDirectory = new File(getDestinationDirectoryPath());
         final File classesDirectory = new File(this.classesDirectoryPath);
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
-        prepareDirectories(destinationDirectory);
-        processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
-        cleanupDirectories(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
-        if (this.convertToSonarQubeOutput) {
-            if (this.format.equalsIgnoreCase("xml")) {
-                convertReport();
-            } else {
-                getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
+        System.err.println(baseDataFile.getAbsolutePath());
+        System.err.println(baseDirectory.getAbsolutePath());
+        System.err.println(destinationDataFile.getAbsolutePath());
+        System.err.println(destinationDirectory.getAbsolutePath());
+        System.err.println(classesDirectory.getAbsolutePath());
+        System.err.println(backupClassesDirectory.getAbsolutePath());
+        if (classesDirectory.exists() && classesDirectory.isDirectory()) {
+            prepareDirectories(destinationDirectory);
+            processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
+            cleanupDirectories(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
+            if (this.convertToSonarQubeOutput) {
+                if (this.format.equalsIgnoreCase("xml")) {
+                    convertReport();
+                } else {
+                    getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
+                }
             }
+        } else {
+            getLog().info("Directory containing instrumented classes does not exist, skipping execution.");
         }
     }
 
     private void convertReport() throws MojoExecutionException {
         getLog().debug("Converting Cobertura report to SonarQube generic test coverage report format");
-        final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE);
-        final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE);
+        final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE_NAME);
+        final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE_NAME);
         try {
             new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
                 .withOuputFile(conversionOutputFile)
