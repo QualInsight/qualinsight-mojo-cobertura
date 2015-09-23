@@ -77,7 +77,7 @@ abstract class AbstractReportMojo extends AbstractMojo {
             processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
             cleanupDirectories(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
             if (this.convertToSonarQubeOutput) {
-                if (this.format.equalsIgnoreCase("xml")) {
+                if ("xml".equalsIgnoreCase(this.format)) {
                     convertReport();
                 } else {
                     getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
@@ -128,13 +128,12 @@ abstract class AbstractReportMojo extends AbstractMojo {
     private Arguments buildReportingArguments(final File baseDirectory, final File destinationDirectory, final File baseDataFile) {
         getLog().debug("Building Cobertura report generation arguments");
         final ArgumentsBuilder builder = new ArgumentsBuilder();
-        final Arguments arguments = builder.setBaseDirectory(baseDirectory.getAbsolutePath())
+        return builder.setBaseDirectory(baseDirectory.getAbsolutePath())
             .setDestinationDirectory(destinationDirectory.getAbsolutePath())
             .setDataFile(baseDataFile.getAbsolutePath())
             .setEncoding(this.encoding)
             .calculateMethodComplexity(this.calculateMethodComplexity)
             .build();
-        return arguments;
     }
 
     private void prepareDirectories(final File destinationDirectory) throws MojoExecutionException {

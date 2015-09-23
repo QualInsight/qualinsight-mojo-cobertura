@@ -83,7 +83,6 @@ public class CoberturaToSonarQubeCoverageReportConverter {
     }
 
     private void process(final File input, final File output, final Transformer transformer) throws IOException, SAXException, TransformerException {
-        System.err.println(input.getAbsolutePath() + " -> " + output.getAbsolutePath());
         reset(transformer);
         final Document document = this.builder.parse(input);
         final Source source = new DOMSource(document);
