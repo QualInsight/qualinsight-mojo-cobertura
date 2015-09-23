@@ -39,20 +39,27 @@ public class CoberturaToSonarQubeCoverageReportConverter {
 
     private final DocumentBuilder builder;
 
-    private final Transformer transformer;
+    private final Transformer coberturaToSonarqubeTransformer;
+
+    private final Transformer filesDeduplicationTransformer;
 
     public CoberturaToSonarQubeCoverageReportConverter() throws TransformerConfigurationException, ParserConfigurationException, IOException {
 
         InputStream is = null;
         try {
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             is = getClass().getClassLoader()
                 .getResourceAsStream("com/qualinsight/mojo/cobertura/transformation/cobertura2sonarqube.xsl");
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            this.transformer = transformerFactory.newTransformer(new StreamSource(is));
+            this.coberturaToSonarqubeTransformer = transformerFactory.newTransformer(new StreamSource(is));
+            is.close();
+            is = getClass().getClassLoader()
+                .getResourceAsStream("com/qualinsight/mojo/cobertura/transformation/deduplication.xsl");
+            this.filesDeduplicationTransformer = transformerFactory.newTransformer(new StreamSource(is));
         } finally {
             if (null != is) {
                 is.close();
             }
+            is = null;
         }
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setValidating(false);
@@ -69,15 +76,22 @@ public class CoberturaToSonarQubeCoverageReportConverter {
     }
 
     protected void process(final File input, final File output) throws SAXException, IOException, TransformerException {
-        reset();
+        final File tempFile = File.createTempFile("cobertura2sonarqube", "");
+        process(input, tempFile, this.coberturaToSonarqubeTransformer);
+        process(tempFile, output, this.filesDeduplicationTransformer);
+        tempFile.delete();
+    }
+
+    private void process(final File input, final File output, final Transformer transformer) throws IOException, SAXException, TransformerException {
+        System.err.println(input.getAbsolutePath() + " -> " + output.getAbsolutePath());
+        reset(transformer);
         final Document document = this.builder.parse(input);
         final Source source = new DOMSource(document);
         FileOutputStream os = null;
-
         try {
             os = new FileOutputStream(output);
             final Result result = new StreamResult(os);
-            this.transformer.transform(source, result);
+            transformer.transform(source, result);
         } finally {
             if (null != os) {
                 os.close();
@@ -85,9 +99,9 @@ public class CoberturaToSonarQubeCoverageReportConverter {
         }
     }
 
-    private void reset() {
-        this.transformer.clearParameters();
-        this.transformer.reset();
+    private void reset(final Transformer transformer) {
+        transformer.clearParameters();
+        transformer.reset();
         this.builder.reset();
     }
 }
