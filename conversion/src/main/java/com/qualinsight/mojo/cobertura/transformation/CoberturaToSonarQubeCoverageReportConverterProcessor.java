@@ -35,8 +35,12 @@ public class CoberturaToSonarQubeCoverageReportConverterProcessor {
         this.outputFile = outputFile;
     }
 
-    public void process() throws SAXException, IOException, TransformerException {
-        this.converter.process(this.inputFile, this.outputFile);
+    public void process() throws CoberturaToSonarQubeCoverageReportConversionProcessingException {
+        try {
+            this.converter.process(this.inputFile, this.outputFile);
+        } catch (SAXException | IOException | TransformerException e) {
+            throw new CoberturaToSonarQubeCoverageReportConversionProcessingException(e);
+        }
     }
 
 }

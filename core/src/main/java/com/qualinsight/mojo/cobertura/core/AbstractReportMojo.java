@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
 import net.sourceforge.cobertura.dsl.Arguments;
 import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
 import net.sourceforge.cobertura.dsl.Cobertura;
@@ -31,7 +31,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.xml.sax.SAXException;
+import com.qualinsight.mojo.cobertura.transformation.CoberturaToSonarQubeCoverageReportConversionProcessingException;
 import com.qualinsight.mojo.cobertura.transformation.CoberturaToSonarQubeCoverageReportConverter;
 
 abstract class AbstractReportMojo extends AbstractMojo {
@@ -96,7 +96,7 @@ abstract class AbstractReportMojo extends AbstractMojo {
             new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
                 .withOuputFile(conversionOutputFile)
                 .process();
-        } catch (SAXException | TransformerException | ParserConfigurationException | IOException e) {
+        } catch (final CoberturaToSonarQubeCoverageReportConversionProcessingException | TransformerConfigurationException | ParserConfigurationException | IOException e) {
             final String message = "An error occurred during coverage output conversion: ";
             getLog().error(message, e);
             throw new MojoExecutionException(message, e);
