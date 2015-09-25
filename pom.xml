@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.qualinsight.core</groupId>
     <artifactId>qualinsight-core-parent</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
   </parent>
   <groupId>com.qualinsight.mojo.cobertura</groupId>
   <artifactId>qualinsight-mojo-cobertura</artifactId>
@@ -50,6 +50,12 @@
     <lib.version.maven-plugin-api>3.3.3</lib.version.maven-plugin-api>
     <lib.version.maven-plugin-annotations>3.4</lib.version.maven-plugin-annotations>
     <lib.version.commons-io>2.4</lib.version.commons-io>
+    <!-- License properties -->
+    <license.name>QualInsight-LGPL3</license.name>
+    <license.project>qualinsight-mojo-cobertura</license.project>
+    <license.period>${project.inceptionYear}</license.period>
+    <license.owner>${project.organization.name}</license.owner>
+    <license.url>${project.organization.url}</license.url>
   </properties>
   <dependencyManagement>
     <dependencies>
