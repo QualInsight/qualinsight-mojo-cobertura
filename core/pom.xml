@@ -36,24 +36,10 @@
       <version>2.1.1</version>
       <exclusions>
         <exclusion>
-          <groupId>jaxen</groupId>
-          <artifactId>jaxen</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>xerces</groupId>
           <artifactId>xercesImpl</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1.4</version>
     </dependency>
     <dependency>
       <groupId>org.jdom</groupId>
