@@ -99,8 +99,20 @@ abstract class AbstractReportMojo extends AbstractMojo {
             new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
                 .withOuputFile(conversionOutputFile)
                 .process();
-        } catch (final CoberturaToSonarQubeCoverageReportConversionProcessingException | TransformerConfigurationException | ParserConfigurationException | IOException e) {
+        } catch (final CoberturaToSonarQubeCoverageReportConversionProcessingException e) {
             final String message = "An error occurred during coverage output conversion: ";
+            getLog().error(message, e);
+            throw new MojoExecutionException(message, e);
+        } catch (final TransformerConfigurationException e) {
+            final String message = "An error occurred during transformation configuration: ";
+            getLog().error(message, e);
+            throw new MojoExecutionException(message, e);
+        } catch (final ParserConfigurationException e) {
+            final String message = "An error occurred during parser configuration: ";
+            getLog().error(message, e);
+            throw new MojoExecutionException(message, e);
+        } catch (final IOException e) {
+            final String message = "An error occurred while trying to access conversion files: ";
             getLog().error(message, e);
             throw new MojoExecutionException(message, e);
         }
