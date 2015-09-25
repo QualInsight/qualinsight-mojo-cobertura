@@ -41,20 +41,13 @@ public class CoberturaToSonarQubeCoverageReportConverter {
 
     private final Transformer coberturaToSonarqubeTransformer;
 
-    private final Transformer filesDeduplicationTransformer;
-
     public CoberturaToSonarQubeCoverageReportConverter() throws TransformerConfigurationException, ParserConfigurationException, IOException {
-
         InputStream is = null;
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             is = getClass().getClassLoader()
                 .getResourceAsStream("com/qualinsight/mojo/cobertura/transformation/cobertura2sonarqube.xsl");
             this.coberturaToSonarqubeTransformer = transformerFactory.newTransformer(new StreamSource(is));
-            is.close();
-            is = getClass().getClassLoader()
-                .getResourceAsStream("com/qualinsight/mojo/cobertura/transformation/deduplication.xsl");
-            this.filesDeduplicationTransformer = transformerFactory.newTransformer(new StreamSource(is));
         } finally {
             if (null != is) {
                 is.close();
@@ -76,21 +69,14 @@ public class CoberturaToSonarQubeCoverageReportConverter {
     }
 
     protected void process(final File input, final File output) throws SAXException, IOException, TransformerException {
-        final File tempFile = File.createTempFile("cobertura2sonarqube", "");
-        process(input, tempFile, this.coberturaToSonarqubeTransformer);
-        process(tempFile, output, this.filesDeduplicationTransformer);
-        tempFile.delete();
-    }
-
-    private void process(final File input, final File output, final Transformer transformer) throws IOException, SAXException, TransformerException {
-        reset(transformer);
+        reset();
         final Document document = this.builder.parse(input);
         final Source source = new DOMSource(document);
         FileOutputStream os = null;
         try {
             os = new FileOutputStream(output);
             final Result result = new StreamResult(os);
-            transformer.transform(source, result);
+            this.coberturaToSonarqubeTransformer.transform(source, result);
         } finally {
             if (null != os) {
                 os.close();
@@ -98,9 +84,9 @@ public class CoberturaToSonarQubeCoverageReportConverter {
         }
     }
 
-    private void reset(final Transformer transformer) {
-        transformer.clearParameters();
-        transformer.reset();
+    private void reset() {
+        this.coberturaToSonarqubeTransformer.clearParameters();
+        this.coberturaToSonarqubeTransformer.reset();
         this.builder.reset();
     }
 }
