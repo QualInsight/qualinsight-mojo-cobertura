@@ -55,7 +55,7 @@ The following three reporting goals are available.
 |-----------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------|
 | ``report-ut-coverage``      | PREPARE_PACKAGE       | Reports unit test coverage results, converts report to SonarQube generic coverage format and restores backuped classes.       |
 | ``report-it-coverage``      | POST_INTEGRATION_TEST | Reports integration test coverage results, converts report to SonarQube generic coverage format and restores backuped classes.|
-| ``report-overall-coverage`` | POST_INTEGRATION_TEST | Merges unit and integration coverage results, then converts report to SonarQube generic coverage format.                      |
+| ``report-overall-coverage`` | VERIFY                | Merges unit and integration coverage results, then converts report to SonarQube generic coverage format.                      |
 
 All three goals share the following configuration options.
 
