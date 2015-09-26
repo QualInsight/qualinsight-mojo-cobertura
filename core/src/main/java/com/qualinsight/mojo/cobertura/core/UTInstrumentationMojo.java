@@ -22,6 +22,11 @@ package com.qualinsight.mojo.cobertura.core;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+/**
+ * Mojo that instruments code to be tested by unit tests in order to be able to generate coverage report file for unit tests.
+ *
+ * @author Michel Pawlak
+ */
 @Mojo(name = "instrument-ut", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class UTInstrumentationMojo extends AbstractInstrumentationMojo {
 }

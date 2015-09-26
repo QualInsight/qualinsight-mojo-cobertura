@@ -20,34 +20,30 @@
 package com.qualinsight.mojo.cobertura.transformation;
 
 import java.io.File;
-import java.io.IOException;
-import javax.xml.transform.TransformerException;
-import org.xml.sax.SAXException;
 
-public class CoberturaToSonarQubeCoverageReportConverterProcessor {
+/**
+ * Builder class for {@link CoberturaToSonarQubeCoverageReportConversionProcessor}
+ *
+ * @author Michel Pawlak
+ */
+public final class CoberturaToSonarQubeCoverageReportConversionProcessorBuilder {
 
     private final CoberturaToSonarQubeCoverageReportConverter converter;
 
     private final File inputFile;
 
-    private final File outputFile;
-
-    public CoberturaToSonarQubeCoverageReportConverterProcessor(final CoberturaToSonarQubeCoverageReportConverter converter, final File inputFile, final File outputFile) {
+    CoberturaToSonarQubeCoverageReportConversionProcessorBuilder(final CoberturaToSonarQubeCoverageReportConverter converter, final File inputFile) {
         this.converter = converter;
         this.inputFile = inputFile;
-        this.outputFile = outputFile;
     }
 
-    public void process() throws CoberturaToSonarQubeCoverageReportConversionProcessingException {
-        try {
-            this.converter.process(this.inputFile, this.outputFile);
-        } catch (final SAXException e) {
-            throw new CoberturaToSonarQubeCoverageReportConversionProcessingException(e);
-        } catch (final IOException e) {
-            throw new CoberturaToSonarQubeCoverageReportConversionProcessingException(e);
-        } catch (final TransformerException e) {
-            throw new CoberturaToSonarQubeCoverageReportConversionProcessingException(e);
-        }
+    /**
+     * Defines the output file to be used by the {@link CoberturaToSonarQubeCoverageReportConversionProcessor}.
+     *
+     * @param outputFile File to which the converted coverage report in SonarQube generic test coverage format has to be written.
+     * @return a correctly configured {@link CoberturaToSonarQubeCoverageReportConversionProcessor}
+     */
+    public CoberturaToSonarQubeCoverageReportConversionProcessor withOuputFile(final File outputFile) {
+        return new CoberturaToSonarQubeCoverageReportConversionProcessor(this.converter, this.inputFile, outputFile);
     }
-
 }

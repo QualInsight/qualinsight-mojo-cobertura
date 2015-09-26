@@ -23,6 +23,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * Mojo that generates unit tests coverage report files.
+ *
+ * @author Michel Pawlak
+ */
 @Mojo(name = "report-ut-coverage", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class UTCoverageReportMojo extends AbstractCleaningReportMojo {
 

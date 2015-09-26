@@ -38,12 +38,24 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class CoberturaToSonarQubeCoverageReportConverter {
+/**
+ * Converter class able to convert coverage reports in Cobertura XML test coverage format to SonarQube generic test coverage plugin format.
+ *
+ * @author Michel Pawlak
+ */
+public final class CoberturaToSonarQubeCoverageReportConverter {
 
     private final DocumentBuilder builder;
 
     private final Transformer coberturaToSonarqubeTransformer;
 
+    /**
+     * Constructs a {@link CoberturaToSonarQubeCoverageReportConverter} that needs to be configured.
+     *
+     * @throws TransformerConfigurationException if a XSL transformation issue occurs.
+     * @throws ParserConfigurationException if a parsing issue occurs.
+     * @throws IOException if an I/O issue occurs while handling the file to be parsed or the file to be created by the converter.
+     */
     public CoberturaToSonarQubeCoverageReportConverter() throws TransformerConfigurationException, ParserConfigurationException, IOException {
         InputStream is = null;
         try {
@@ -67,11 +79,17 @@ public class CoberturaToSonarQubeCoverageReportConverter {
         this.builder = builderFactory.newDocumentBuilder();
     }
 
-    public CoberturaToSonarQubeCoverageReportConverterOutputFileBuilder withInputFile(final File inputFile) {
-        return new CoberturaToSonarQubeCoverageReportConverterOutputFileBuilder(this, inputFile);
+    /**
+     * Defines the input file in Cobertura XML test coverage report format to be converted to SonarQube generic test coverage format.
+     *
+     * @param inputFile input file in Cobertura XML test coverage format.
+     * @return {@link CoberturaToSonarQubeCoverageReportConversionProcessorBuilder} to be used to convert the provided input file.
+     */
+    public CoberturaToSonarQubeCoverageReportConversionProcessorBuilder withInputFile(final File inputFile) {
+        return new CoberturaToSonarQubeCoverageReportConversionProcessorBuilder(this, inputFile);
     }
 
-    protected void process(final File input, final File output) throws SAXException, IOException, TransformerException {
+    void process(final File input, final File output) throws SAXException, IOException, TransformerException {
         reset();
         final Document document = this.builder.parse(input);
         final Source source = new DOMSource(document);

@@ -19,12 +19,22 @@
  */
 package com.qualinsight.mojo.cobertura.transformation;
 
+/**
+ * Exception raised when a problem occurs while processing report conversion.
+ *
+ * @author Michel Pawlak
+ */
 public class CoberturaToSonarQubeCoverageReportConversionProcessingException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public CoberturaToSonarQubeCoverageReportConversionProcessingException(final Exception e) {
-        super(e);
+    /**
+     * Constructor that wraps a cause exception.
+     *
+     * @param cause Exception cause to be wrapped by the {@link CoberturaToSonarQubeCoverageReportConversionProcessingException}
+     */
+    public CoberturaToSonarQubeCoverageReportConversionProcessingException(final Exception cause) {
+        super(cause);
     }
 
 }

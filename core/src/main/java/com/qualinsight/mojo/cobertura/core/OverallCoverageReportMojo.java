@@ -31,6 +31,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * Mojo that merges Cobertura unit test and integration test coverage data, then generates an overall test coverage report.
+ * 
+ * @author Michel Pawlak
+ */
 @Mojo(name = "report-overall-coverage", defaultPhase = LifecyclePhase.VERIFY)
 public class OverallCoverageReportMojo extends AbstractReportMojo {
 

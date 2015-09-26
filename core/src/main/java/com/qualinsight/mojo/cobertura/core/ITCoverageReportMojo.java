@@ -23,6 +23,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * Mojo that generates integration tests coverage report files.
+ * 
+ * @author Michel Pawlak
+ */
 @Mojo(name = "report-it-coverage", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class ITCoverageReportMojo extends AbstractCleaningReportMojo {
 

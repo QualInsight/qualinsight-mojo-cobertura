@@ -34,6 +34,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
+    /**
+     * Default Cobertura base data file name.
+     */
     public static final String BASE_DATA_FILE_NAME = "cobertura.ser";
 
     @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
