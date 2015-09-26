@@ -46,17 +46,8 @@ abstract class AbstractReportMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/main/", required = false)
     private String baseDirectoryPath;
 
-    @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
-    private String classesDirectoryPath;
-
-    @Parameter(defaultValue = "${project.build.directory}/cobertura/backup-classes/", required = false)
-    private String backupClassesDirectoryPath;
-
     @Parameter(defaultValue = "UTF-8", required = false)
     private String encoding;
-
-    @Parameter(defaultValue = "false", required = false)
-    private Boolean calculateMethodComplexity;
 
     @Parameter(defaultValue = "xml", required = false)
     private String format;
