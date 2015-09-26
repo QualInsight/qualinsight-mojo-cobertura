@@ -52,13 +52,13 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
     private String destinationDirectoryPath;
 
     @Parameter(defaultValue = "true", required = false)
-    private Boolean ignoreTrivial;
+    private boolean ignoreTrivial;
 
     @Parameter(defaultValue = "false", required = false)
-    private Boolean failOnError;
+    private boolean failOnError;
 
     @Parameter(defaultValue = "false", required = false)
-    private Boolean threadsafeRigorous;
+    private boolean threadsafeRigorous;
 
     @Parameter(defaultValue = "UTF-8", required = false)
     private String encoding;

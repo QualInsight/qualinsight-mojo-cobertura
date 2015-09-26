@@ -74,6 +74,7 @@ The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the foll
 | backupClassesDirectoryPath      | ``${project.build.directory}/cobertura/backup-classes/``   | false      | Path where backuped classes are located.                   |
 | destinationDirectoryPath        | ``${project.build.directory}/cobertura/(ut|it)``           | false      | Path where generated (ut|it) reports will be placed.       |
 | calculateMethodComplexity       | ``false``                                                  | false      | Should reports include cyclomatic complexity calculation ? |
+| keepInstrumentedClasses         | ``true``                                                   | false      | Should instrumented classes be kept after reporting ?      |
 
 The ``report-overall-coverage`` report goal has the following configuration additional options.
 
@@ -170,6 +171,29 @@ As you can see on the screenshot, currently the SonarQube Generic Test Coverage 
 
 * When using the SonarQube Generic Test Coverage plugin for SonarQube in order to import Cobertura coverage data, you need to uninstall the [Cobertura Plugin] (http://docs.sonarqube.org/display/PLUG/Cobertura+Plugin) prior to executing an analysis, otherwise you'll encounter collisions (and thus analysis failures) between metrics reported by the two plugins as the same metric cannot be reported twice.
 * For the same reason, when using Cobertura in order to report Coverage metrics, you need to forbid the execution of Jacoco coverage reports or other coverage report tool.
+
+## Default directory structure ##
+
+The default directory structure created by the plugin is the following:
+
+```
+${project.build.directory}/cobertura/
+   |- backup-classes/
+   |- it
+   |   |- cobertura.ser
+   |   |- coverage.xml
+   |   |- converted-coverage.xml
+   |   `- instrumented-classes/
+   |- overall
+   |   |- cobertura.ser
+   |   |- coverage.xml
+   |   `- converted-coverage.xml
+   `- ut
+       |- cobertura.ser
+       |- coverage.xml
+       |- converted-coverage.xml
+       `- instrumented-classes/ 
+```
 
 ## How does the qualinsight-mojo-cobertura-core plugin compare to the cobertura-maven-plugin ? ##
 

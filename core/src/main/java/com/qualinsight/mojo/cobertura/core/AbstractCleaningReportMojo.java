@@ -30,6 +30,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
 
+    private static final String INSTRUMENTED_CLASSES_DIRECTORY_NAME = "instrumented-classes";
+
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
     private String classesDirectoryPath;
 
@@ -37,7 +39,10 @@ abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
     private String backupClassesDirectoryPath;
 
     @Parameter(defaultValue = "false", required = false)
-    private Boolean calculateMethodComplexity;
+    private boolean calculateMethodComplexity;
+
+    @Parameter(defaultValue = "true", required = false)
+    private boolean keepInstrumentedClasses;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -47,21 +52,27 @@ abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
         final File destinationDirectory = new File(getDestinationDirectoryPath());
         final File classesDirectory = new File(this.classesDirectoryPath);
         final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
+        final File instrumentedClassesDirectory = new File(getDestinationDirectoryPath() + INSTRUMENTED_CLASSES_DIRECTORY_NAME);
         if (classesDirectory.exists() && classesDirectory.isDirectory()) {
             prepareFileSystem(destinationDirectory);
             processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
-            cleanupFileSystem(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
+            cleanupFileSystem(classesDirectory, backupClassesDirectory, instrumentedClassesDirectory, baseDataFile, destinationDataFile);
             convertToSonarQubeReport();
         } else {
             getLog().info("Directory containing instrumented classes does not exist, skipping execution.");
         }
     }
 
-    private void cleanupFileSystem(final File classesDirectory, final File backupClassesDirectory, final File baseDataFile, final File destinationDataFile) throws MojoExecutionException {
+    private void cleanupFileSystem(final File classesDirectory, final File backupClassesDirectory, final File instrumentedClassesDirectory, final File baseDataFile, final File destinationDataFile)
+        throws MojoExecutionException {
         getLog().debug("Cleaning up file system after Cobertura report generation");
         try {
             if (classesDirectory.exists()) {
-                FileUtils.forceDelete(classesDirectory);
+                if (this.keepInstrumentedClasses) {
+                    FileUtils.moveDirectory(classesDirectory, instrumentedClassesDirectory);
+                } else {
+                    FileUtils.forceDelete(classesDirectory);
+                }
             }
             FileUtils.moveDirectory(backupClassesDirectory, classesDirectory);
             FileUtils.moveFile(baseDataFile, destinationDataFile);

@@ -59,7 +59,7 @@ abstract class AbstractReportMojo extends AbstractMojo {
     private String format;
 
     @Parameter(defaultValue = "true", required = false)
-    private Boolean convertToSonarQubeOutput;
+    private boolean convertToSonarQubeOutput;
 
     protected void prepareFileSystem(final File destinationDirectory) throws MojoExecutionException {
         getLog().debug("Preparing Cobertura report generation directories");
