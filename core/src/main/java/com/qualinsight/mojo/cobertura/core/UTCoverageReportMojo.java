@@ -24,7 +24,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "report-ut-coverage", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class UTCoverageReportMojo extends AbstractReportMojo {
+public class UTCoverageReportMojo extends AbstractCleaningReportMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/cobertura/ut/", readonly = true)
     private String destinationDirectoryPath;

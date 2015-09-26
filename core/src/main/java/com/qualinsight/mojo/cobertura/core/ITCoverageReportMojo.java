@@ -24,7 +24,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "report-it-coverage", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
-public class ITCoverageReportMojo extends AbstractReportMojo {
+public class ITCoverageReportMojo extends AbstractCleaningReportMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/cobertura/it/", required = false)
     private String destinationDirectoryPath;
