@@ -6,12 +6,12 @@ This project provides a Maven plugin that runs Cobertura instrumentation and rep
 
 This plugin was written for the following four reasons :
 
-* [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) generates a coverage report mixing both UT and IT coverage. As a result UT and IT coverage cannot be separated in SonarQube.
-* [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) relies on [Cobertura](https://github.com/cobertura/cobertura) executables and runs tests in his own lifecycle. As a result all tests must be run twice.
+* ``[cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/)`` generates a coverage report mixing both UT and IT coverage. As a result UT and IT coverage cannot be separated in SonarQube.
+* ``[cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/)`` relies on [Cobertura](https://github.com/cobertura/cobertura) executables and runs tests in his own lifecycle. As a result all tests must be run twice.
 * [SonarQube cobertura plugin](http://docs.sonarqube.org/display/PLUG/Cobertura+Plugin) only takes a single input report. As a result UT and IT coverage cannot be separated in SonarQube.
 * Using another coverage tool such as [Jacoco](https://github.com/jacoco/jacoco) was not an option as Jacoco incompatibility with [PowerMock](https://github.com/jayway/powermock) results in classes having 0% coverage for tests using PowerMock.
 
-After having analyzed different approaches to tackle these issues, we decided to provide a Mojo (Maven plugin) that allows coverage computation without having to run twice unit and integration tests, and that is able to convert cobertura xml reports to [SonarQube Generic Test Coverage](http://docs.sonarqube.org/display/PLUG/Generic+Test+Coverage) plugin format in order to have coverage information for both UT and IT. 
+After having analyzed different approaches to tackle these issues, I decided to provide a Mojo (Maven plugin) that allows coverage computation without having to run twice unit and integration tests, and that is able to convert cobertura xml reports to [SonarQube Generic Test Coverage](http://docs.sonarqube.org/display/PLUG/Generic+Test+Coverage) plugin format in order to have coverage information for both UT and IT. 
 
 ## Features ##
 
@@ -173,9 +173,9 @@ As you can see on the screenshot, currently the SonarQube Generic Test Coverage 
 
 ## How does the qualinsight-mojo-cobertura-core plugin compare to the cobertura-maven-plugin ? ##
 
-Unlike the [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) the ``qualinsight-mojo-cobertura-core`` plugin does not run UT and IT tests in his own lifecycle and does not use Cobertura executable, but directly calls Cobertura API to instrument code before tests execution. 
+Unlike the ``[cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/)`` the ``qualinsight-mojo-cobertura-core`` plugin does not run UT and IT tests in his own lifecycle and does not use Cobertura executable, but directly calls Cobertura API to instrument code before tests execution. 
 
-This allows to calculate coverage during the ``test`` and ``integration-test`` lifecycle phases of your regular reactor build, and to execute tests only executed once.
+This allows to calculate coverage during the ``test`` and ``integration-test`` lifecycle phases of your regular reactor build, and to execute tests only once.
 
 Further, the ``qualinsight-mojo-cobertura-core`` plugin is able to convert Cobertura xml reports to SonarQube generic test coverage plugin format to benefit from UT and IT coverage measures separation in SonarQube.
 
