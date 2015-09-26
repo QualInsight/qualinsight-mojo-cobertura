@@ -1,24 +1,32 @@
 /*
- * This file is part of qualinsight-mojo-cobertura-core.
+ * qualinsight-mojo-cobertura
+ * Copyright (c) 2015, QualInsight
+ * http://www.qualinsight.com/
  *
- * qualinsight-mojo-cobertura-core is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
  *
- * qualinsight-mojo-cobertura-core is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with qualinsight-mojo-cobertura-core.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program. If not, you can retrieve a copy
+ * from <http://www.gnu.org/licenses/>.
  */
 package com.qualinsight.mojo.cobertura.core;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+/**
+ * Mojo that instruments code to be tested by unit tests in order to be able to generate coverage report file for unit tests.
+ *
+ * @author Michel Pawlak
+ */
 @Mojo(name = "instrument-ut", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class UTInstrumentationMojo extends AbstractInstrumentationMojo {
 }

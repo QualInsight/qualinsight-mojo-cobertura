@@ -17,17 +17,24 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core;
-
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
+package com.qualinsight.mojo.cobertura.transformation;
 
 /**
- * Mojo that instruments code to be tested by integration tests in order to be able to generate coverage report file for integration tests.
+ * Exception raised when a problem occurs while processing report conversion.
  *
  * @author Michel Pawlak
  */
-@Mojo(name = "instrument-it", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
-public class ITInstrumentationMojo extends AbstractInstrumentationMojo {
+public class CoberturaToSonarQubeCoverageReportConversionProcessingException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Constructor that wraps a cause exception.
+     *
+     * @param cause Exception cause to be wrapped by the {@link CoberturaToSonarQubeCoverageReportConversionProcessingException}
+     */
+    public CoberturaToSonarQubeCoverageReportConversionProcessingException(final Exception cause) {
+        super(cause);
+    }
 
 }

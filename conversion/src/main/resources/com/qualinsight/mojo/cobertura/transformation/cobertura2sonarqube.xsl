@@ -18,16 +18,23 @@
     </coverage>
   </xsl:template>
 
-  <xsl:template mode="custom-copy" match="/coverage/packages/package/classes/class">
-    <xsl:value-of select="$TAB" />
-    <file path="{$SRC_DIR}/{@filename}">
-      <xsl:value-of select="$CR" />
-      <xsl:for-each select="lines/line">
-        <xsl:apply-templates mode="custom-copy" select="." />
-      </xsl:for-each>
-      <xsl:value-of select="$TAB" />
-    </file>
-    <xsl:value-of select="$CR" />
+  <xsl:template mode="custom-copy" match="/coverage/packages/package/classes">
+    <xsl:for-each select="class">
+      <xsl:variable name="currFilename" select="@filename" />
+      <xsl:if test=". = /coverage/packages/package/classes/class[@filename=$currFilename][1]">
+        <xsl:value-of select="$TAB" />
+        <file path="{$SRC_DIR}/{@filename}">
+          <xsl:value-of select="$CR" />
+          <xsl:for-each select="/coverage/packages/package/classes/class[@filename=$currFilename]">
+            <xsl:for-each select="lines/line">
+              <xsl:apply-templates mode="custom-copy" select="." />
+            </xsl:for-each>
+          </xsl:for-each>
+          <xsl:value-of select="$TAB" />
+        </file>
+        <xsl:value-of select="$CR" />
+      </xsl:if>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template mode="custom-copy" match="/coverage/packages/package/classes/class/lines/line">
@@ -35,7 +42,7 @@
     <xsl:value-of select="$TAB" />
     <xsl:choose>
       <xsl:when test="@condition-coverage">
-        <xsl:variable name="COVERAGE_SEPARATOR">/</xsl:variable>
+        <xsl:variable name="COVERAGE_SEPARATOR"><![CDATA[/]]></xsl:variable>
         <xsl:variable name="COVERAGE" select="translate(translate(substring-after(normalize-space(@condition-coverage), '% '), ')', ''), '(', '')" />
         <lineToCover lineNumber="{@number}" covered="{boolean(@hits &gt; 0)}" branchesToCover="{substring-after($COVERAGE, $COVERAGE_SEPARATOR)}" coveredBranches="{substring-before($COVERAGE, $COVERAGE_SEPARATOR)}" />
       </xsl:when>
