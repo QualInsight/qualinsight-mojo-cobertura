@@ -21,7 +21,6 @@ package com.qualinsight.mojo.cobertura.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import net.sourceforge.cobertura.dsl.Arguments;
 import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
 import net.sourceforge.cobertura.dsl.Cobertura;
@@ -130,7 +129,11 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
                 FileUtils.forceDelete(backupClassesDirectory);
             }
             FileUtils.copyDirectory(classesDirectory, backupClassesDirectory);
-            Files.deleteIfExists(baseDataFile.toPath());
+            if (!FileUtils.deleteQuietly(baseDataFile)) {
+                final String message = "Could not delete baseDataFile: " + baseDataFile.getAbsolutePath();
+                getLog().error(message);
+                throw new MojoExecutionException(message);
+            }
         } catch (final IOException e) {
             final String message = "An error occured during directories preparation:";
             getLog().error(message, e);

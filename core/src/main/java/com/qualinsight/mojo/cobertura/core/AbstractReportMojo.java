@@ -21,7 +21,6 @@ package com.qualinsight.mojo.cobertura.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import net.sourceforge.cobertura.dsl.Arguments;
@@ -63,12 +62,10 @@ abstract class AbstractReportMojo extends AbstractMojo {
 
     protected void prepareFileSystem(final File destinationDirectory) throws MojoExecutionException {
         getLog().debug("Preparing Cobertura report generation directories");
-        try {
-            Files.createDirectories(destinationDirectory.toPath());
-        } catch (final IOException e) {
+        if (!destinationDirectory.mkdirs()) {
             final String message = "An error occured during directories preparation: ";
-            getLog().error(message, e);
-            throw new MojoExecutionException(message, e);
+            getLog().error(message);
+            throw new MojoExecutionException(message);
         }
     }
 

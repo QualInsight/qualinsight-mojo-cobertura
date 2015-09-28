@@ -86,9 +86,9 @@ The ``report-overall-coverage`` report goal has the following configuration addi
 
 ## Plugin usage ##
 
-The latest version of the plugin can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/).
+The latest version of the plugin can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/). A full usage example is available (see [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example).)
 
-**Note**: the plugin is compiled for Java 1.6 (since version 1.0.4)
+**Note**: the plugin is compatible with Java 1.6 (since version 1.0.5)
 
 ### Step 1: declare plugin ###
 
@@ -165,7 +165,7 @@ These reports can then be imported [SonarQube Generic Test Coverage](http://docs
 
 ![SonarQube Generic Test Coverage plugin configuration](sonarqube_plugin_configuration.png)
 
-As you can see on the screenshot, currently the SonarQube Generic Test Coverage plugin cannot take an overall coverage report as input. As soon as [SONARCOVRG-14](https://jira.sonarsource.com/browse/SONARCOVRG-14) is fixed, you'll be able to configure overall coverage input file as well.
+As you can see on the screenshot, currently the SonarQube Generic Test Coverage plugin cannot take an overall coverage report as input. As soon as [SONARCOVRG-14](https://jira.sonarsource.com/browse/SONARCOVRG-14) is fixed (see [pull request](https://github.com/SonarSource/sonar-generic-coverage/pull/5)), you'll be able to configure overall coverage input file as well.
 
 **Important notes** :
 
@@ -203,7 +203,7 @@ This allows to calculate coverage during the ``test`` and ``integration-test`` l
 
 Further, the ``qualinsight-mojo-cobertura-core`` plugin is able to convert Cobertura xml reports to SonarQube generic test coverage plugin format to benefit from UT and IT coverage measures separation in SonarQube.
 
-The only limitations of the ``qualinsight-mojo-cobertura-core`` plugin compared to the ``cobertura-maven-plugin`` is that it does not currently have a custom report merging feature (it currently only merges UT and IT reports, you cannot add a list of reports to merge) nor coverage check feature. However these features will be added in a later release 1.1.x)
+The only limitations of the ``qualinsight-mojo-cobertura-core`` plugin compared to the ``cobertura-maven-plugin`` is that it does not currently have a custom report merging feature (it currently only merges UT and IT reports, you cannot add a list of reports to merge) nor coverage check feature. However these features will be added in a future release)
 
 ## Build status
 
