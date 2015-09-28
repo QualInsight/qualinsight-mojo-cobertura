@@ -47,7 +47,7 @@
   </scm>
   <properties>
     <lib.version.cobertura>2.1.1</lib.version.cobertura>
-    <lib.version.maven-plugin-api>3.3.3</lib.version.maven-plugin-api>
+    <lib.version.maven-plugin-api>3.2.5</lib.version.maven-plugin-api>
     <lib.version.maven-plugin-annotations>3.4</lib.version.maven-plugin-annotations>
     <lib.version.commons-io>2.4</lib.version.commons-io>
     <!-- License properties -->
