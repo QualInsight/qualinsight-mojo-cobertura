@@ -129,7 +129,7 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
                 FileUtils.forceDelete(backupClassesDirectory);
             }
             FileUtils.copyDirectory(classesDirectory, backupClassesDirectory);
-            if (!FileUtils.deleteQuietly(baseDataFile)) {
+            if (baseDataFile.exists() && !FileUtils.deleteQuietly(baseDataFile)) {
                 final String message = "Could not delete baseDataFile: " + baseDataFile.getAbsolutePath();
                 getLog().error(message);
                 throw new MojoExecutionException(message);
