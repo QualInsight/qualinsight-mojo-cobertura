@@ -86,9 +86,9 @@ The ``report-overall-coverage`` report goal has the following configuration addi
 
 ## Plugin usage ##
 
-The latest version of the plugin can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/).
+The latest version of the plugin can be retrieved from [Maven central](https://repo1.maven.org/maven2/com/qualinsight/mojo/cobertura/qualinsight-mojo-cobertura-core/). A full usage example is available (see [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example).)
 
-**Note**: the plugin is compiled for Java 1.6 (since version 1.0.4)
+**Note**: the plugin is compatible with Java 1.6 (since version 1.0.5)
 
 ### Step 1: declare plugin ###
 
