@@ -74,7 +74,6 @@ The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the foll
 | backupClassesDirectoryPath      | ``${project.build.directory}/cobertura/backup-classes/``   | false      | Path where backuped classes are located.                   |
 | destinationDirectoryPath        | ``${project.build.directory}/cobertura/(ut|it)``           | false      | Path where generated (ut|it) reports will be placed.       |
 | calculateMethodComplexity       | ``false``                                                  | false      | Should reports include cyclomatic complexity calculation ? |
-| keepInstrumentedClasses         | ``true``                                                   | false      | Should instrumented classes be kept after reporting ?      |
 
 The ``report-overall-coverage`` report goal has the following configuration additional options.
 

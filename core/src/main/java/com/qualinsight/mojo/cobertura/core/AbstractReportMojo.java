@@ -62,7 +62,7 @@ abstract class AbstractReportMojo extends AbstractMojo {
 
     protected void prepareFileSystem(final File destinationDirectory) throws MojoExecutionException {
         getLog().debug("Preparing Cobertura report generation directories");
-        if (!destinationDirectory.mkdirs()) {
+        if (!destinationDirectory.exists() && !destinationDirectory.mkdirs()) {
             final String message = "An error occured during directories preparation: ";
             getLog().error(message);
             throw new MojoExecutionException(message);
