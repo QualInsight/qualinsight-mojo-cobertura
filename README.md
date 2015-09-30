@@ -194,6 +194,195 @@ ${project.build.directory}/cobertura/
        `- instrumented-classes/ 
 ```
 
+## Gathering IT test coverage data when running instrumented code on Jetty
+
+It is possible to instrument code and deploy it on a Jetty server prior to executing ITs. Here are the steps to follow in order to make it work. They are taken from [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example) project's ``wartest`` module.
+
+** Note **: currently only Jetty 9.2.x is supported, support for other versions will be added in a later release of ``qualinsight-plugins-jetty``, the artifact that allows coverage data gathering when using Jetty.  
+
+### Step 1: configure qualinsight-mojo-cobertura-core plugin
+
+If you want to run instrumented code on Jenkins prior to executing IT tests, the declaration of the plugin is slightly different from the one described above. The differences are the following:
+
+* ``instrument-it`` goal need to be run during the ``package`` phase
+* ``report-it-coverage`` goal need to be run during the ``verify`` phase
+* ``report-overall-coverage`` goal need to be run during the ``install`` phase
+
+These modifications are required in order to avoid between the plugin's execution and jenkins startup and shutdown. 
+
+Further, as the instrumentation is done during the ``package`` phase, in order to make sure that instrumented classes will not be packaged, we instrument them to another destination directory.
+
+```
+      <plugin>
+        <groupId>com.qualinsight.mojo.cobertura</groupId>
+        <artifactId>qualinsight-mojo-cobertura-core</artifactId>
+        <version>${plugin.version.qualinsight-mojo-cobertura-core}</version>
+        <executions>
+          <execution>
+            <id>instrument-ut</id>
+            <goals>
+              <goal>instrument-ut</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report-ut-coverage</id>
+            <goals>
+              <goal>report-ut-coverage</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>instrument-it</id>
+            <goals>
+              <goal>instrument-it</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <!-- Let's instrument code to a custom location -->
+              <destinationDirectoryPath>${project.build.directory}/cobertura/it/instrumented-classes</destinationDirectoryPath>
+            </configuration>
+          </execution>
+          <execution>
+            <id>report-it-coverage</id>
+            <goals>
+              <goal>report-it-coverage</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+          <execution>
+            <id>report-overall-coverage</id>
+            <goals>
+              <goal>report-overall-coverage</goal>
+            </goals>
+            <phase>install</phase>
+          </execution>
+        </executions>
+      </plugin>
+```
+### Step 2: configure jetty-maven-plugin
+
+Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``jetty-maven-plugin`` as follows:
+
+```
+  <properties>
+    <!-- Currently only Jetty 9.2.x is supported ! -->
+    <lib.version.jetty>9.2.13.v20150730</lib.version.jetty>
+    <!-- Small library that provides a Jetty managed lifecycle that saves cobertura data correctly -->
+    <lib.version.qualinsight-plugins-jetty>1.0.0</lib.version.qualinsight-plugins-jetty>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${lib.version.jetty}</version>
+        <configuration>
+          <stopKey>secret</stopKey>
+          <stopPort>9999</stopPort>
+          <daemon>true</daemon>
+          <webAppConfig>
+            <contextPath>/wartest</contextPath>
+          </webAppConfig>
+          <!-- jetty server configuration -->
+          <jettyXml>wartest/src/test/resources/jetty.xml</jettyXml>
+          <!-- must point to the directory containing instrumented classes for it tests --> 
+          <classesDirectory>${project.build.directory}/cobertura/it/instrumented-classes</classesDirectory>
+          <systemProperties>
+            <systemProperty>
+              <name>net.sourceforge.cobertura.datafile</name>
+              <!-- mandatory in order to make sure that qualinsight-mojo-cobertura-core:report-it-coverage goal will be able to find coverage data -->
+              <value>${basedir}/cobertura.ser</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>start-jetty</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop-jetty</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+            <configuration>
+              <!-- make sure that we wait for the server to stop -->
+              <stopWait>10</stopWait>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <!-- this dependency provides the services that will dump cobertura coverage at server stop -->
+          <dependency>
+            <groupId>com.qualinsight.plugins.jetty</groupId>
+            <artifactId>qualinsight-plugins-jetty</artifactId>
+            <version>${lib.version.qualinsight-plugins-jetty}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>${lib.version.jetty}</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.cobertura</groupId>
+            <artifactId>cobertura</artifactId>
+            <version>${lib.version.cobertura}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-util</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>servlet-api-2.5</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+```
+
+### Step 3: configure Jetty server with a jetty.xml file
+
+In order to make sure that cobertura coverage data file is correctly saved at server shutdown we must add a maaged lifecycle to Jetty server configuration. Here is an example of how you can do it:
+
+```
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_2.dtd">
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+  <Call name="addManaged">
+    <Arg>
+      <New id="CoberturaCoverageService" class="com.qualinsight.plugins.jetty.CoberturaCoverageService" />
+    </Arg>
+  </Call>
+</Configure>
+``` 
+
+The ``com.qualinsight.plugins.jetty.CoberturaCoverageService`` class is provided by the ``qualinsight-plugins-jetty`` project.
+
+### Step 4: run your tests ###
+
+Run your build with your regular UT and IT tests execution configuration by executing ``mvn install``. That's it!
+
+
 ## How does the qualinsight-mojo-cobertura-core plugin compare to the cobertura-maven-plugin ? ##
 
 Unlike the [``cobertura-maven-plugin``](http://www.mojohaus.org/cobertura-maven-plugin/) the ``qualinsight-mojo-cobertura-core`` plugin does not run UT and IT tests in his own lifecycle and does not use Cobertura executable, but directly calls Cobertura API to instrument code before tests execution. 
