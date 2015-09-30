@@ -198,7 +198,7 @@ ${project.build.directory}/cobertura/
 
 It is possible to instrument code and deploy it on a Jetty server prior to executing ITs. Here are the steps to follow in order to make it work. They are taken from [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example) project's ``wartest`` module.
 
-** Note **: currently only Jetty 9.2.x is supported, support for other versions will be added in a later release of ``qualinsight-plugins-jetty``, the artifact that allows coverage data gathering when using Jetty.  
+** Note **: currently only Jetty 9.2.x is supported, support for other versions will be added in a later release of [``qualinsight-plugins-jetty``](https://github.com/QualInsight/qualinsight-plugins-jetty), the artifact that allows coverage data gathering when using Jetty.  
 
 ### Step 1: configure qualinsight-mojo-cobertura-core plugin
 
