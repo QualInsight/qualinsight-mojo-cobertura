@@ -196,9 +196,16 @@ ${project.build.directory}/cobertura/
 
 ## Gathering IT test coverage data when running instrumented code on Jetty
 
-It is possible to instrument code and deploy it on a Jetty server prior to executing ITs. Here are the steps to follow in order to make it work. They are taken from [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example) project's ``wartest`` module.
+It is possible to instrument code and deploy it on a Jetty server prior to executing ITs. Here are the steps to follow in order to make it work. They are taken from [qualinsight-mojo-cobertura-example](https://github.com/pawlakm/qualinsight-mojo-cobertura-example) project's ``wartest-jetty*`` modules.
 
-** Note **: currently only Jetty 9.2.x is supported, support for other versions will be added in a later release of [``qualinsight-plugins-jetty``](https://github.com/QualInsight/qualinsight-plugins-jetty), the artifact that allows coverage data gathering when using Jetty.  
+Supported Jetty versions are:
+
+* Jetty 9.3.3.v20150827
+* Jetty 9.2.13.v20150730
+* Jetty 8.1.17.v20150415
+* Jetty 7.6.17.v20150415
+
+Here follows an example using on Jetty 9.3.x.
 
 ### Step 1: configure qualinsight-mojo-cobertura-core plugin
 
@@ -264,9 +271,9 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
 
 ```
   <properties>
-    <!-- Currently only Jetty 9.2.x is supported ! -->
-    <lib.version.jetty>9.2.13.v20150730</lib.version.jetty>
-    <!-- Small library that provides a Jetty managed lifecycle that saves cobertura data correctly -->
+    <lib.version.javax.servlet-api>3.1.0</lib.version.javax.servlet-api>
+    <lib.version.jetty-util>9.3.3.v20150827</lib.version.jetty-util>
+    <plugin.version.jetty-maven-plugin>9.3.3.v20150827</plugin.version.jetty-maven-plugin>
     <lib.version.qualinsight-plugins-jetty>1.0.0</lib.version.qualinsight-plugins-jetty>
   </properties>
   <build>
@@ -274,7 +281,7 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${lib.version.jetty}</version>
+        <version>${plugin.version.jetty-maven-plugin}</version>
         <configuration>
           <stopKey>secret</stopKey>
           <stopPort>9999</stopPort>
@@ -282,15 +289,13 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
           <webAppConfig>
             <contextPath>/wartest</contextPath>
           </webAppConfig>
-          <!-- jetty server configuration -->
-          <jettyXml>wartest/src/test/resources/jetty.xml</jettyXml>
-          <!-- must point to the directory containing instrumented classes for it tests --> 
+          <jettyXml>${project.basedir}/src/test/resources/jetty.xml</jettyXml>
           <classesDirectory>${project.build.directory}/cobertura/it/instrumented-classes</classesDirectory>
           <systemProperties>
+            <force>true</force>
             <systemProperty>
               <name>net.sourceforge.cobertura.datafile</name>
-              <!-- mandatory in order to make sure that qualinsight-mojo-cobertura-core:report-it-coverage goal will be able to find coverage data -->
-              <value>${basedir}/cobertura.ser</value>
+              <value>${project.basedir}/cobertura.ser</value>
             </systemProperty>
           </systemProperties>
         </configuration>
@@ -309,22 +314,20 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
               <goal>stop</goal>
             </goals>
             <configuration>
-              <!-- make sure that we wait for the server to stop -->
               <stopWait>10</stopWait>
             </configuration>
           </execution>
         </executions>
         <dependencies>
-          <!-- this dependency provides the services that will dump cobertura coverage at server stop -->
           <dependency>
             <groupId>com.qualinsight.plugins.jetty</groupId>
-            <artifactId>qualinsight-plugins-jetty</artifactId>
+            <artifactId>qualinsight-plugins-jetty-9.3.x</artifactId>
             <version>${lib.version.qualinsight-plugins-jetty}</version>
           </dependency>
           <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>${lib.version.jetty}</version>
+            <version>${lib.version.jetty-util}</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.cobertura</groupId>
@@ -353,7 +356,7 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
+      <version>${lib.version.javax.servlet-api}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -365,7 +368,7 @@ In order to make sure that cobertura coverage data file is correctly saved at se
 
 ```
 <?xml version="1.0"?>
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_2.dtd">
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
 
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
   <Call name="addManaged">
