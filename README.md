@@ -164,10 +164,9 @@ These reports can then be imported [SonarQube Generic Test Coverage](http://docs
 
 ![SonarQube Generic Test Coverage plugin configuration](sonarqube_plugin_configuration.png)
 
-As you can see on the screenshot, currently the SonarQube Generic Test Coverage plugin cannot take an overall coverage report as input. As soon as [SONARCOVRG-14](https://jira.sonarsource.com/browse/SONARCOVRG-14) is fixed (see [pull request](https://github.com/SonarSource/sonar-generic-coverage/pull/5)), you'll be able to configure overall coverage input file as well.
-
 **Important notes** :
 
+* In order to be able to import UT, IT and overall coverage data into SonarQube, you need to use SonarQube Generic Test Coverage plugin version 1.2 or above. With version 1.1 you'll only be able to import UT and IT coverage data, not overall.
 * When using the SonarQube Generic Test Coverage plugin for SonarQube in order to import Cobertura coverage data, you need to uninstall the [Cobertura Plugin] (http://docs.sonarqube.org/display/PLUG/Cobertura+Plugin) prior to executing an analysis, otherwise you'll encounter collisions (and thus analysis failures) between metrics reported by the two plugins as the same metric cannot be reported twice.
 * For the same reason, when using Cobertura in order to report Coverage metrics, you need to forbid the execution of Jacoco coverage reports or other coverage report tool.
 
