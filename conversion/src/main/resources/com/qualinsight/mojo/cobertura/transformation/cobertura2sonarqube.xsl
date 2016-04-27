@@ -8,7 +8,7 @@
   <xsl:variable name="CR">
     <xsl:text>&#xA;</xsl:text>
   </xsl:variable>
-  <xsl:variable name="SRC_DIR"><![CDATA[src/main/java]]></xsl:variable>
+  <xsl:param name="SRC_DIR"/>
 
   <xsl:template match="/coverage">
     <xsl:value-of select="$CR" />
@@ -23,7 +23,7 @@
       <xsl:variable name="currFilename" select="@filename" />
       <xsl:if test=". = /coverage/packages/package/classes/class[@filename=$currFilename][1]">
         <xsl:value-of select="$TAB" />
-        <file path="{$SRC_DIR}/{@filename}">
+        <file path="{$SRC_DIR}{@filename}">
           <xsl:value-of select="$CR" />
           <xsl:for-each select="/coverage/packages/package/classes/class[@filename=$currFilename]">
             <xsl:for-each select="lines/line">

@@ -97,6 +97,7 @@ public final class CoberturaToSonarQubeCoverageReportConverter {
         try {
             os = new FileOutputStream(output);
             final Result result = new StreamResult(os);
+            this.coberturaToSonarqubeTransformer.setParameter("SRC_DIR", "src/main/java/");
             this.coberturaToSonarqubeTransformer.transform(source, result);
         } finally {
             if (null != os) {
