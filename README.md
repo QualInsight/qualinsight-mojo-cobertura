@@ -395,6 +395,6 @@ Further, the ``qualinsight-mojo-cobertura-core`` plugin is able to convert Cober
 
 The only limitations of the ``qualinsight-mojo-cobertura-core`` plugin compared to the ``cobertura-maven-plugin`` is that it does not currently have a custom report merging feature (it currently only merges UT and IT reports, you cannot add a list of reports to merge) nor coverage check feature. However these features will be added in a future release)
 
-## Build status
+## Contributing to the project
 
-![Travis build status](https://travis-ci.org/QualInsight/qualinsight-mojo-cobertura.svg?branch=master)
+If you want to contribute to this project, please have a look at the [developer toolset page](https://github.com/QualInsight/qualinsight-developer-toolset). It provides contribution guidelines I ask you to follow. Thanks in advance for your help !
