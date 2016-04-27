@@ -8,7 +8,7 @@
   <groupId>com.qualinsight.mojo.cobertura</groupId>
   <artifactId>qualinsight-mojo-cobertura</artifactId>
   <version>1.0.9-SNAPSHOT</version>
-  <description>Cobertura maven plugin with report conversion to SonarQube generic test coverage format.</description>
+  <description>Cobertura maven plugin that separates UT / IT / overall coverage reports, allows single tests execution and takes care of reports conversion to SonarQube generic test coverage format.</description>
   <url>https://github.com/QualInsight/qualinsight-mojo-cobertura</url>
   <organization>
     <url>http://www.qualinsight.com/</url>
@@ -110,4 +110,5 @@
       </plugin>
     </plugins>
   </build>
+  <name>QualInsight Cobertura Mojo</name>
 </project>
