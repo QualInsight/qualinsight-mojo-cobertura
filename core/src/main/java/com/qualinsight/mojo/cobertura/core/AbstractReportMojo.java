@@ -54,8 +54,10 @@ abstract class AbstractReportMojo extends AbstractMojo {
     @Parameter(defaultValue = "UTF-8", required = false)
     private String encoding;
 
-    @Parameter(defaultValue = "xml", required = false)
-    private String format;
+    @Parameter(required = false)
+    private String[] formats = {
+        "xml"
+    };
 
     @Parameter(defaultValue = "true", required = false)
     private boolean convertToSonarQubeOutput;
@@ -73,17 +75,24 @@ abstract class AbstractReportMojo extends AbstractMojo {
         getLog().debug("Generating Cobertura report");
         final Cobertura cobertura = new Cobertura(arguments);
         final Report report = cobertura.report();
-        report.export(ReportFormat.getFromString(this.format));
+        for (final String format : this.formats) {
+            report.export(ReportFormat.getFromString(format));
+        }
     }
 
     protected void convertToSonarQubeReport() throws MojoExecutionException {
         if (this.convertToSonarQubeOutput) {
-            if ("xml".equalsIgnoreCase(this.format)) {
-                final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE_NAME);
-                final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE_NAME);
-                convertReport(conversionInputFile, conversionOutputFile);
-            } else {
-                getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.format + "'.");
+            boolean foundXmlFormat = false;
+            for (final String format : this.formats) {
+                if ("xml".equalsIgnoreCase(format)) {
+                    final File conversionInputFile = new File(getDestinationDirectoryPath() + BASE_COVERAGE_FILE_NAME);
+                    final File conversionOutputFile = new File(getDestinationDirectoryPath() + CONVERTED_COVERAGE_FILE_NAME);
+                    convertReport(conversionInputFile, conversionOutputFile);
+                    foundXmlFormat = true;
+                }
+            }
+            if (!foundXmlFormat) {
+                getLog().warn("Conversion to SonarQube generic test coverage format skipped: report format should be 'xml' but was '" + this.formats + "'.");
             }
         }
     }
@@ -125,8 +134,8 @@ abstract class AbstractReportMojo extends AbstractMojo {
         return this.encoding;
     }
 
-    protected String getFormat() {
-        return this.format;
+    protected String[] getFormats() {
+        return this.formats;
     }
 
     abstract Arguments buildReportingArguments(final File baseDirectory, final File destinationDirectory, final File baseDataFile);
