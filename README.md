@@ -63,7 +63,7 @@ All three goals share the following configuration options.
 
 | Option                    | Default value                     | required ? | Description                                                |
 |---------------------------|-----------------------------------|------------|------------------------------------------------------------|
-| baseDirectoryPath         | ``${project.basedir}/src/main/``  | false      | Path where source code is located.                         |
+| baseDirectoryPath         | ``${project.basedir}/src/main/java/``  | false      | Path where source code is located.                         |
 | encoding                  | ``UTF-8``                         | false      | File encoding used for classes compilation.                |
 | format                    | ``xml``                           | false      | Output format (xml|html).                                  |
 | convertToSonarQubeOutput  | ``true``                          | false      | Should the report be converted to SonarQube generic coverage format ? (requires 'xml' format) |

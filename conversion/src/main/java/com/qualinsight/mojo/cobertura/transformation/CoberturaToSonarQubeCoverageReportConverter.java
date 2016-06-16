@@ -49,15 +49,20 @@ public final class CoberturaToSonarQubeCoverageReportConverter {
 
     private final Transformer coberturaToSonarqubeTransformer;
 
+    private String sourceDirectory;
+
     /**
      * Constructs a {@link CoberturaToSonarQubeCoverageReportConverter} that needs to be configured.
+     *
+     * @param sourceDirectory source directory to be used during transformation
      *
      * @throws TransformerConfigurationException if a XSL transformation issue occurs.
      * @throws ParserConfigurationException if a parsing issue occurs.
      * @throws IOException if an I/O issue occurs while handling the file to be parsed or the file to be created by the converter.
      */
-    public CoberturaToSonarQubeCoverageReportConverter() throws TransformerConfigurationException, ParserConfigurationException, IOException {
+    public CoberturaToSonarQubeCoverageReportConverter(final String sourceDirectory) throws TransformerConfigurationException, ParserConfigurationException, IOException {
         InputStream is = null;
+        this.sourceDirectory = sourceDirectory;
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             is = getClass().getClassLoader()
@@ -97,7 +102,7 @@ public final class CoberturaToSonarQubeCoverageReportConverter {
         try {
             os = new FileOutputStream(output);
             final Result result = new StreamResult(os);
-            this.coberturaToSonarqubeTransformer.setParameter("SRC_DIR", "src/main/java/");
+            this.coberturaToSonarqubeTransformer.setParameter("SRC_DIR", this.sourceDirectory);
             this.coberturaToSonarqubeTransformer.transform(source, result);
         } finally {
             if (null != os) {

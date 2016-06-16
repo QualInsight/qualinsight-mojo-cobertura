@@ -48,7 +48,7 @@ abstract class AbstractReportMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
     private String projectDirectoryPath;
 
-    @Parameter(defaultValue = "${project.basedir}/src/main/", required = false)
+    @Parameter(defaultValue = "${project.basedir}/src/main/java/", required = false)
     private String baseDirectoryPath;
 
     @Parameter(defaultValue = "UTF-8", required = false)
@@ -100,7 +100,9 @@ abstract class AbstractReportMojo extends AbstractMojo {
     private void convertReport(final File conversionInputFile, final File conversionOutputFile) throws MojoExecutionException {
         getLog().debug("Converting Cobertura report to SonarQube generic test coverage report format");
         try {
-            new CoberturaToSonarQubeCoverageReportConverter().withInputFile(conversionInputFile)
+            final String sourceDirectory = this.baseDirectoryPath.substring(this.projectDirectoryPath.length());
+            getLog().debug("XSLT SRC_DIR variable is set to: " + sourceDirectory);
+            new CoberturaToSonarQubeCoverageReportConverter(sourceDirectory).withInputFile(conversionInputFile)
                 .withOuputFile(conversionOutputFile)
                 .process();
         } catch (final CoberturaToSonarQubeCoverageReportConversionProcessingException e) {
