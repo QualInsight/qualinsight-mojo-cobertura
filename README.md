@@ -22,7 +22,7 @@ After having analyzed different approaches to tackle these issues, I decided to 
 * Coverage report conversion to SonarQube generic coverage format
 * Seamless integration with your regular reactor build (single tests execution, simple configuration)
 
-## Plugin goals and options ##
+## Goals and options ##
 
 In order to use the ``qualinsight-mojo-cobertura-core`` plugin, goals must be configured for both cobertura code instrumentation and reporting.
 
@@ -39,9 +39,9 @@ These two instrumentation goals have the following configuration options.
 
 |Option                      | Default value                                           | required ? | Description                                                  |
 |----------------------------|---------------------------------------------------------|------------|--------------------------------------------------------------|
-|classesDirectoryPath        |``${project.build.directory}/classes/``                  | false      | Path where compiled classes are located.                     |
-|backupClassesDirectoryPath  |``${project.build.directory}/cobertura/backup-classes/`` | false      | Path where compiled classes will be backuped.                |
-|destinationDirectoryPath    |``${project.build.directory}/classes/``                  | false      | Path where instrumented classes will be generated.           |
+|classesPath                 |``${project.build.directory}/classes/``                  | false      | Path where compiled classes are located.                     |
+|backupClassesPath           |``${project.build.directory}/cobertura/backup-classes/`` | false      | Path where compiled classes will be backuped.                |
+|instrumentationPath         |``${project.build.directory}/classes/``                  | false      | Path where instrumented classes will be generated.           |
 |ignoreTrivial               |``true``                                                 | false      | Excludes constructors/methods that contain one line of code. |
 |failOnError                 |``false``                                                | false      | Should the build fail on error ?                             |
 |threadsafeRigorous          |``false``                                                | false      | Make Cobertura use a threadsafe code instrumentation ?       |
@@ -54,36 +54,37 @@ These two instrumentation goals have the following configuration options.
 The following three reporting goals are available.
 
 | Goal                        | Default Phase         | Description                                                                                                                   |
-|-----------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| ``report-ut-coverage``      | PREPARE_PACKAGE       | Reports unit test coverage results, converts report to SonarQube generic coverage format and restores backuped classes.       |
-| ``report-it-coverage``      | POST_INTEGRATION_TEST | Reports integration test coverage results, converts report to SonarQube generic coverage format and restores backuped classes.|
-| ``report-overall-coverage`` | VERIFY                | Merges unit and integration coverage results, then converts report to SonarQube generic coverage format.                      |
+|-----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------|
+| ``report-ut-coverage``      | PREPARE_PACKAGE       | Reports UT test coverage results, converts report to SonarQube generic coverage format and restores backuped classes. |
+| ``report-it-coverage``      | POST_INTEGRATION_TEST | Reports IT coverage results, converts report to SonarQube generic coverage format and restores backuped classes.      |
+| ``report-overall-coverage`` | VERIFY                | Merges unit and integration coverage results, then converts report to SonarQube generic coverage format.              |
 
 All three goals share the following configuration options.
 
 | Option                    | Default value                     | required ? | Description                                                |
 |---------------------------|-----------------------------------|------------|------------------------------------------------------------|
-| baseDirectoryPath         | ``${project.basedir}/src/main/java/``  | false      | Path where source code is located.                         |
-| encoding                  | ``UTF-8``                         | false      | File encoding used for classes compilation.                |
-| format                    | ``xml``                           | false      | Output format (xml|html).                                  |
+| calculateMethodComplexity | ``false``                         | false      | Should reports include cyclomatic complexity calculation ? |
 | convertToSonarQubeOutput  | ``true``                          | false      | Should the report be converted to SonarQube generic coverage format ? (requires 'xml' format) |
+| encoding                  | ``UTF-8``                         | false      | File encoding used for classes compilation.                |
+| formats                   | ``{xml}``                         | false      | Array of output formats (xml|html).                        |
+| sourcesPath               | ``${project.basedir}/src/main/java/``  | false      | Path where source code is located.                    |
 
-The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the following additional configuration options.
+The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the following additional configuration option.
 
-| Option                          | Default value                                              | required ? | Description                                                |
-|---------------------------------|------------------------------------------------------------|------------|------------------------------------------------------------|
-| classesDirectoryPath            | ``${project.build.directory}/classes/``                    | false      | Path where instrumented classes are located.               |
-| backupClassesDirectoryPath      | ``${project.build.directory}/cobertura/backup-classes/``   | false      | Path where backuped classes are located.                   |
-| destinationDirectoryPath        | ``${project.build.directory}/cobertura/(ut|it)``           | false      | Path where generated (ut|it) reports will be placed.       |
-| calculateMethodComplexity       | ``false``                                                  | false      | Should reports include cyclomatic complexity calculation ? |
+| Option                | Default value                                              | required ? | Description                                           |
+|-----------------------|------------------------------------------------------------|------------|-------------------------------------------------------|
+| dataFilePath          | ``${project.basedir}``                                     | false      | Path where ``cobertura.ser`` file is located          |
+| classesPath           | ``${project.build.directory}/classes/``                    | false      | Path where instrumented classes are located.          |
+| backupPath            | ``${project.build.directory}/cobertura/backup-classes/``   | false      | Path where original classes will be backuped.         |
+| coverageReportPath    | ``${project.build.directory}/cobertura/(ut|it)``           | false      | Path where generated UT/IT reports will be generated. |
 
 The ``report-overall-coverage`` report goal has the following configuration additional options.
 
-| Option                          | Default value                                              | required ? | Description                                                |
-|---------------------------------|------------------------------------------------------------|------------|------------------------------------------------------------|
-| baseUtDirectoryPath             | ``${project.build.directory}/cobertura/ut/``               | false      | Path where ut coverage report is located.                  |
-| baseItDirectoryPath             | ``${project.build.directory}/cobertura/it/``               | false      | Path where it coverage report is located.                  |
-| destinationDirectoryPath        | ``${project.build.directory}/cobertura/overall/``          | false      | Path where generated overall report will be placed.        |
+| Option                     | Default value                                              | required ? | Description                                           |
+|----------------------------|------------------------------------------------------------|------------|-------------------------------------------------------|
+| utCoverageDataFileLocation | ``${project.build.directory}/cobertura/ut/cobertura.ser``  | false      | Path where UT coverage data file is located.          |
+| itCoverageDataFileLocation | ``${project.build.directory}/cobertura/it/cobertura.ser``  | false      | Path where IT coverage data file is located.          |
+| overallCoverageReportPath  | ``${project.build.directory}/cobertura/overall/``          | false      | Path where generated overall report will be generated.|
 
 ## Plugin usage ##
 
@@ -95,7 +96,7 @@ The latest version of the plugin can be retrieved from [Maven central](https://r
 
 The declaration of the plugin is as easy as follows.
 
-```
+```xml
   <plugin>
     <groupId>com.qualinsight.mojo.cobertura</groupId>
     <artifactId>qualinsight-mojo-cobertura-core</artifactId>
@@ -139,7 +140,7 @@ The declaration of the plugin is as easy as follows.
 
 In order to allow instrumented classes to report coverage during tests execution, Cobertura must be added as a ``test`` dependency.
 
-```
+```xml
   <dependency>
     <groupId>net.sourceforge.cobertura</groupId>
     <artifactId>cobertura</artifactId>
@@ -156,7 +157,7 @@ Run your build with your regular UT and IT tests execution configuration. That's
 
 By default, the ``convertToSonarQubeOutput`` option of the ``report-ut-coverage``, ``report-it-coverage`` and ``report-overall-coverage`` goals is set to ``true``. This results in the conversion of regular Cobertura ``coverage.xml`` reports to a format the [SonarQube Generic Test Coverage](http://docs.sonarqube.org/display/PLUG/Generic+Test+Coverage) plugin for SonarQube is able to read. This allows you then to directly use your Cobertura UT and IT coverage reports in SonarQube while keeping UT and IT coverage information separated.
 
-The name of the converted coverage report file is ``converted-coverage.xml`` and is located in the directory specified by the ``destinationDirectoryPath`` option of the reporting goals, i.e: 
+The name of the converted coverage report file is ``converted-coverage.xml`` and is located in the directory specified by the ``destinationPath`` option of the reporting goals, i.e: 
 
 * ``${project.build.directory}/cobertura/ut/converted-coverage.xml`` for UT coverage
 * ``${project.build.directory}/cobertura/it/converted-coverage.xml`` for IT coverage 
@@ -246,7 +247,7 @@ Further, as the instrumentation is done during the ``package`` phase, in order t
             <phase>package</phase>
             <configuration>
               <!-- Let's instrument code to a custom location -->
-              <destinationDirectoryPath>${project.build.directory}/cobertura/it/instrumented-classes</destinationDirectoryPath>
+              <instrumentationPath>${project.build.directory}/cobertura/it/instrumented-classes</instrumentationPath>
             </configuration>
           </execution>
           <execution>

@@ -17,52 +17,51 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core;
+package com.qualinsight.mojo.cobertura.core.reporting;
 
 import java.io.File;
 import java.io.IOException;
-import net.sourceforge.cobertura.dsl.Arguments;
-import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import com.qualinsight.mojo.cobertura.core.instrumentation.AbstractInstrumentationMojo;
 
-abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
+public abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
-    private String classesDirectoryPath;
+    private String classesPath;
 
     @Parameter(defaultValue = "${project.build.directory}/cobertura/backup-classes/", required = false)
-    private String backupClassesDirectoryPath;
+    private String backupPath;
 
-    @Parameter(defaultValue = "false", required = false)
-    private boolean calculateMethodComplexity;
+    @Parameter(defaultValue = "${project.basedir}/", required = false)
+    private String dataFilePath;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final File baseDataFile = new File(getProjectDirectoryPath() + AbstractInstrumentationMojo.BASE_DATA_FILE_NAME);
-        final File baseDirectory = new File(getBaseDirectoryPath());
-        final File destinationDataFile = new File(getDestinationDirectoryPath() + AbstractInstrumentationMojo.BASE_DATA_FILE_NAME);
-        final File destinationDirectory = new File(getDestinationDirectoryPath());
-        final File classesDirectory = new File(this.classesDirectoryPath);
-        final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
+        final File dataFile = new File(dataFilePath() + AbstractInstrumentationMojo.DATA_FILE_NAME);
+        final File destinationDataFile = new File(coverageReportPath() + AbstractInstrumentationMojo.DATA_FILE_NAME);
+        final File sourcesDirectory = new File(sourcesPath());
+        final File destinationDirectory = new File(coverageReportPath());
+        final File classesDirectory = new File(this.classesPath);
+        final File backupDirectory = new File(this.backupPath);
         if (classesDirectory.exists() && classesDirectory.isDirectory()) {
             prepareFileSystem(destinationDirectory);
-            processReporting(buildReportingArguments(baseDirectory, destinationDirectory, baseDataFile));
-            cleanupFileSystem(classesDirectory, backupClassesDirectory, baseDataFile, destinationDataFile);
+            processReporting(buildCoberturaReportArguments(sourcesDirectory, destinationDirectory, dataFile));
+            cleanupFileSystem(classesDirectory, backupDirectory, dataFile, destinationDataFile);
             convertToSonarQubeReport();
         } else {
             getLog().info("Directory containing classes does not exist, skipping execution.");
         }
     }
 
-    private void cleanupFileSystem(final File classesDirectory, final File backupClassesDirectory, final File baseDataFile, final File destinationDataFile) throws MojoExecutionException {
+    private void cleanupFileSystem(final File classesDirectory, final File backupClassesDirectory, final File dataFile, final File destinationDataFile) throws MojoExecutionException {
         getLog().debug("Cleaning up file system after Cobertura report generation");
         try {
             FileUtils.forceDelete(classesDirectory);
             FileUtils.moveDirectory(backupClassesDirectory, classesDirectory);
-            FileUtils.moveFile(baseDataFile, destinationDataFile);
+            FileUtils.moveFile(dataFile, destinationDataFile);
         } catch (final IOException e) {
             final String message = "An error occurred during file system cleanup: ";
             getLog().error(message, e);
@@ -70,15 +69,11 @@ abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
         }
     }
 
-    @Override
-    Arguments buildReportingArguments(final File baseDirectory, final File destinationDirectory, final File baseDataFile) {
-        getLog().debug("Building Cobertura report generation arguments");
-        final ArgumentsBuilder builder = new ArgumentsBuilder();
-        return builder.setBaseDirectory(baseDirectory.getAbsolutePath())
-            .setDestinationDirectory(destinationDirectory.getAbsolutePath())
-            .setDataFile(baseDataFile.getAbsolutePath())
-            .setEncoding(getEncoding())
-            .calculateMethodComplexity(this.calculateMethodComplexity)
-            .build();
+    protected String dataFilePath() {
+        return this.dataFilePath;
     }
+
+    @Override
+    abstract String coverageReportPath();
+
 }

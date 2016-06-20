@@ -17,7 +17,7 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core;
+package com.qualinsight.mojo.cobertura.core.reporting;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -25,18 +25,18 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Mojo that generates integration tests coverage report files.
- * 
+ *
  * @author Michel Pawlak
  */
 @Mojo(name = "report-it-coverage", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
 public class ITCoverageReportMojo extends AbstractCleaningReportMojo {
 
     @Parameter(defaultValue = "${project.build.directory}/cobertura/it/", required = false)
-    private String destinationDirectoryPath;
+    private String coverageReportPath;
 
     @Override
-    String getDestinationDirectoryPath() {
-        return this.destinationDirectoryPath;
+    String coverageReportPath() {
+        return this.coverageReportPath;
     }
 
 }

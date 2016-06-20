@@ -17,7 +17,7 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core;
+package com.qualinsight.mojo.cobertura.core.instrumentation;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,24 +31,24 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
-abstract class AbstractInstrumentationMojo extends AbstractMojo {
+public abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
     /**
      * Default Cobertura base data file name.
      */
-    public static final String BASE_DATA_FILE_NAME = "cobertura.ser";
+    public static final String DATA_FILE_NAME = "cobertura.ser";
 
     @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
-    private String projectDirectoryPath;
+    private String projectPath;
 
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
-    private String classesDirectoryPath;
+    private String classesPath;
 
     @Parameter(defaultValue = "${project.build.directory}/cobertura/backup-classes/", required = false)
-    private String backupClassesDirectoryPath;
+    private String backupClassesPath;
 
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
-    private String destinationDirectoryPath;
+    private String instrumentationPath;
 
     @Parameter(defaultValue = "true", required = false)
     private boolean ignoreTrivial;
@@ -79,10 +79,10 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final File classesDirectory = new File(this.classesDirectoryPath);
-        final File backupClassesDirectory = new File(this.backupClassesDirectoryPath);
-        final File destinationDirectory = new File(this.destinationDirectoryPath);
-        final File baseDataFile = new File(this.projectDirectoryPath + BASE_DATA_FILE_NAME);
+        final File classesDirectory = new File(this.classesPath);
+        final File backupClassesDirectory = new File(this.backupClassesPath);
+        final File destinationDirectory = new File(this.instrumentationPath);
+        final File baseDataFile = new File(this.projectPath + DATA_FILE_NAME);
         if (classesDirectory.exists() && classesDirectory.isDirectory()) {
             prepareDirectories(classesDirectory, backupClassesDirectory, baseDataFile);
             processInstrumentation(buildInstrumentationArguments(classesDirectory, destinationDirectory, baseDataFile));
@@ -91,13 +91,13 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
         }
     }
 
-    private Arguments buildInstrumentationArguments(final File classesDirectory, final File destinationDirectory, final File baseDataFile) {
+    private Arguments buildInstrumentationArguments(final File classesDirectory, final File destinationDirectory, final File dataFile) {
         getLog().debug("Building Cobertura instrumentation execution arguments");
         ArgumentsBuilder builder = new ArgumentsBuilder();
         // Mandatory arguments
         builder = builder.setBaseDirectory(classesDirectory.getAbsolutePath())
             .setDestinationDirectory(destinationDirectory.getAbsolutePath())
-            .setDataFile(baseDataFile.getAbsolutePath())
+            .setDataFile(dataFile.getAbsolutePath())
             .setEncoding(this.encoding)
             .ignoreTrivial(this.ignoreTrivial)
             .failOnError(this.failOnError)
@@ -122,15 +122,15 @@ abstract class AbstractInstrumentationMojo extends AbstractMojo {
         return builder.build();
     }
 
-    private void prepareDirectories(final File classesDirectory, final File backupClassesDirectory, final File baseDataFile) throws MojoExecutionException {
+    private void prepareDirectories(final File classesDirectory, final File backupClassesDirectory, final File dataFile) throws MojoExecutionException {
         getLog().debug("Preparing Cobertura instrumentation directories");
         try {
             if (backupClassesDirectory.exists()) {
                 FileUtils.forceDelete(backupClassesDirectory);
             }
             FileUtils.copyDirectory(classesDirectory, backupClassesDirectory);
-            if (baseDataFile.exists() && !FileUtils.deleteQuietly(baseDataFile)) {
-                final String message = "Could not delete baseDataFile: " + baseDataFile.getAbsolutePath();
+            if (dataFile.exists() && !FileUtils.deleteQuietly(dataFile)) {
+                final String message = "Could not delete baseDataFile: " + dataFile.getAbsolutePath();
                 getLog().error(message);
                 throw new MojoExecutionException(message);
             }
