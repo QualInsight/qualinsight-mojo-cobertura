@@ -32,7 +32,7 @@ public abstract class AbstractCleaningReportMojo extends AbstractReportMojo {
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
     private String classesPath;
 
-    @Parameter(defaultValue = "${project.build.directory}/cobertura/backup-classes/", required = false)
+    @Parameter(defaultValue = "${project.build.directory}/cobertura/backup/", required = false)
     private String backupPath;
 
     @Parameter(defaultValue = "${project.basedir}/", required = false)

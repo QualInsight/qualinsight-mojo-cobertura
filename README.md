@@ -37,17 +37,17 @@ The following two instrumentation goals are available.
 
 These two instrumentation goals have the following configuration options.
 
-|Option                      | Default value                                           | required ? | Description                                                  |
-|----------------------------|---------------------------------------------------------|------------|--------------------------------------------------------------|
-|classesPath                 |``${project.build.directory}/classes/``                  | false      | Path where compiled classes are located.                     |
-|backupClassesPath           |``${project.build.directory}/cobertura/backup-classes/`` | false      | Path where compiled classes will be backuped.                |
-|instrumentationPath         |``${project.build.directory}/classes/``                  | false      | Path where instrumented classes will be generated.           |
-|ignoreTrivial               |``true``                                                 | false      | Excludes constructors/methods that contain one line of code. |
-|failOnError                 |``false``                                                | false      | Should the build fail on error ?                             |
-|threadsafeRigorous          |``false``                                                | false      | Make Cobertura use a threadsafe code instrumentation ?       |
-|encoding                    |``UTF-8``                                                | false      | File encoding used for classes compilation.                  |
-|ignoreMethodAnnotation      |                                                         | false      | Excludes [annotated methods from instrumentation] (https://github.com/cobertura/cobertura/wiki/Coverage-Annotations). |
-|ignoreClassAnnotation       |                                                         | false      | Excludes [annotated classes from instrumentation] (https://github.com/cobertura/cobertura/wiki/Coverage-Annotations). |
+|Option                      | Default value                                   | required ? | Description                                                  |
+|----------------------------|-------------------------------------------------|------------|--------------------------------------------------------------|
+|classesPath                 |``${project.build.directory}/classes/``          | false      | Path where compiled classes are located.                     |
+|backupPath                  |``${project.build.directory}/cobertura/backup/`` | false      | Path where compiled classes will be backuped.                |
+|instrumentationPath         |``${project.build.directory}/classes/``          | false      | Path where instrumented classes will be generated.           |
+|ignoreTrivial               |``true``                                         | false      | Excludes constructors/methods that contain one line of code. |
+|failOnError                 |``false``                                        | false      | Should the build fail on error ?                             |
+|threadsafeRigorous          |``false``                                        | false      | Make Cobertura use a threadsafe code instrumentation ?       |
+|encoding                    |``UTF-8``                                        | false      | File encoding used for classes compilation.                  |
+|ignoreMethodAnnotation      |                                                 | false      | Excludes [annotated methods from instrumentation] (https://github.com/cobertura/cobertura/wiki/Coverage-Annotations). |
+|ignoreClassAnnotation       |                                                 | false      | Excludes [annotated classes from instrumentation] (https://github.com/cobertura/cobertura/wiki/Coverage-Annotations). |
 
 ### Reporting ###
 
@@ -75,7 +75,7 @@ The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the foll
 |-----------------------|------------------------------------------------------------|------------|-------------------------------------------------------|
 | dataFilePath          | ``${project.basedir}``                                     | false      | Path where ``cobertura.ser`` file is located          |
 | classesPath           | ``${project.build.directory}/classes/``                    | false      | Path where instrumented classes are located.          |
-| backupPath            | ``${project.build.directory}/cobertura/backup-classes/``   | false      | Path where original classes will be backuped.         |
+| backupPath            | ``${project.build.directory}/cobertura/backup/``           | false      | Path where original classes will be backuped.         |
 | coverageReportPath    | ``${project.build.directory}/cobertura/(ut|it)``           | false      | Path where generated UT/IT reports will be generated. |
 
 The ``report-overall-coverage`` report goal has the following configuration additional options.
@@ -221,7 +221,7 @@ These modifications are required in order to avoid between the plugin's executio
 
 Further, as the instrumentation is done during the ``package`` phase, in order to make sure that instrumented classes will not be packaged, we instrument them to another destination directory.
 
-```
+```xml
       <plugin>
         <groupId>com.qualinsight.mojo.cobertura</groupId>
         <artifactId>qualinsight-mojo-cobertura-core</artifactId>
@@ -271,7 +271,7 @@ Further, as the instrumentation is done during the ``package`` phase, in order t
 
 Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``jetty-maven-plugin`` as follows:
 
-```
+```xml
   <properties>
     <lib.version.javax.servlet-api>3.1.0</lib.version.javax.servlet-api>
     <lib.version.jetty-util>9.3.3.v20150827</lib.version.jetty-util>
@@ -368,7 +368,7 @@ Once ``qualinsight-mojo-cobertura-core`` is configured, we need to configure ``j
 
 In order to make sure that cobertura coverage data file is correctly saved at server shutdown we must add a maaged lifecycle to Jetty server configuration. Here is an example of how you can do it:
 
-```
+```xml
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
 

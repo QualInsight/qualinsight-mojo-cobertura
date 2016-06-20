@@ -44,8 +44,8 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
     private String classesPath;
 
-    @Parameter(defaultValue = "${project.build.directory}/cobertura/backup-classes/", required = false)
-    private String backupClassesPath;
+    @Parameter(defaultValue = "${project.build.directory}/cobertura/backup/", required = false)
+    private String backupPath;
 
     @Parameter(defaultValue = "${project.build.directory}/classes/", required = false)
     private String instrumentationPath;
@@ -80,7 +80,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final File classesDirectory = new File(this.classesPath);
-        final File backupClassesDirectory = new File(this.backupClassesPath);
+        final File backupClassesDirectory = new File(this.backupPath);
         final File destinationDirectory = new File(this.instrumentationPath);
         final File baseDataFile = new File(this.projectPath + DATA_FILE_NAME);
         if (classesDirectory.exists() && classesDirectory.isDirectory()) {
