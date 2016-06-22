@@ -61,13 +61,13 @@ The following three reporting goals are available.
 
 All three goals share the following configuration options.
 
-| Option                    | Default value                     | required ? | Description                                                |
-|---------------------------|-----------------------------------|------------|------------------------------------------------------------|
-| calculateMethodComplexity | ``false``                         | false      | Should reports include cyclomatic complexity calculation ? |
-| convertToSonarQubeOutput  | ``true``                          | false      | Should the report be converted to SonarQube generic coverage format ? (requires 'xml' format) |
-| encoding                  | ``UTF-8``                         | false      | File encoding used for classes compilation.                |
-| formats                   | ``{xml}``                         | false      | Array of output formats (xml|html).                        |
-| sourcesPath               | ``${project.basedir}/src/main/java/``  | false      | Path where source code is located.                    |
+| Option                    | Default value                          | required ? | Description                                                |
+|---------------------------|----------------------------------------|------------|------------------------------------------------------------|
+| calculateMethodComplexity | ``false``                              | false      | Should reports include cyclomatic complexity calculation ? |
+| convertToSonarQubeOutput  | ``true``                               | false      | Should the report be converted to SonarQube generic coverage format ? (requires 'xml' format) |
+| encoding                  | ``UTF-8``                              | false      | File encoding used for classes compilation.                |
+| formats                   | ``xml``                                | false      | Array of output formats (xml\|html).                       |
+| sourcesPath               | ``${project.basedir}/src/main/java/``  | false      | Path where source code is located.                         |
 
 The ``report-ut-coverage`` and ``report-it-coverage`` report goals have the following additional configuration option.
 
