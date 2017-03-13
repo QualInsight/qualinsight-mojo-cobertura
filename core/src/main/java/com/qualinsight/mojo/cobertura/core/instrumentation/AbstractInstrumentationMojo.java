@@ -47,7 +47,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
      */
     public static final String DATA_FILE_NAME = "cobertura.ser";
 
-    private final String ERROR_MESSAGE = "An error occured during code instrumentation:";
+    private static final String ERROR_MESSAGE = "An error occured during code instrumentation:";
 
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
