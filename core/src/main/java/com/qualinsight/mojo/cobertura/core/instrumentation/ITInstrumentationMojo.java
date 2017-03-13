@@ -28,9 +28,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @author Michel Pawlak
  */
-@Mojo(name = "instrument-it", 
+@Mojo(
+    name = "instrument-it", 
     defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, 
-    requiresDependencyResolution = ResolutionScope.COMPILE)
+    requiresDependencyResolution = ResolutionScope.COMPILE
+)
 public class ITInstrumentationMojo extends AbstractInstrumentationMojo {
 
 }
