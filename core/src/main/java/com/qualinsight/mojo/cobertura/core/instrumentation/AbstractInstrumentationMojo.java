@@ -155,10 +155,17 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
         }
     }
 
-    /*
-     * Cobertura needs some extra classloader handling... Since we are not using ant and have no access to --auxClasspath we need to patch the URL classloader in InstrumentMain. See: https://github.com/cobertura/cobertura/wiki/FAQ#classnotfoundexception-during-instrumentation https://github.com/cobertura/cobertura/issues/338 https://github.com/cobertura/cobertura/issues/231 https://github.com/cobertura/cobertura/issues/74 https://github.com/cobertura/cobertura/blob/db3bedf3334d8f35bad7ca3c6f4d777be6a09fc5/cobertura/src/main/java/net/sourceforge/cobertura/instrument/CoberturaClassWriter.java#L32
+    /**
+     * Cobertura needs some extra classloader handling... Since we are not using ant and have no access to --auxClasspath we need to patch the URL classloader in InstrumentMain. For more details, see:
+     * <ul>
+     * <li>https://github.com/cobertura/cobertura/wiki/FAQ#classnotfoundexception-during-instrumentation</li>
+     * <li>https://github.com/cobertura/cobertura/issues/338</li>
+     * <li>https://github.com/cobertura/cobertura/issues/231</li>
+     * <li>https://github.com/cobertura/cobertura/issues/74</li>
+     * <li>https://github.com/cobertura/cobertura/blob/db3bedf3334d8f35bad7ca3c6f4d777be6a09fc5/cobertura/src/main/java/net/sourceforge/cobertura/instrument/CoberturaClassWriter.java#L32</li>
+     * </ul>
      */
-    private void feedAuxClasspath() throws MojoExecutionException {
+    private URLClassLoader prepareAuxClassloader() throws MojoExecutionException {
         final List<URL> urls = new ArrayList<URL>();
 
         // Add the classes directory
@@ -192,12 +199,13 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
                 getLog().warn("No file found for artifact " + artifactId);
             }
         }
-        InstrumentMain.urlClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+        return new URLClassLoader(urls.toArray(new URL[urls.size()]));
     }
 
     private void processInstrumentation(final Arguments arguments) throws MojoExecutionException {
+        getLog().debug("Preparing Auxiliary Classloader");
+        feedClassLoader(prepareAuxClassloader());
         getLog().debug("Instrumenting code with Cobertura");
-        feedAuxClasspath();
         try {
             new Cobertura(arguments).instrumentCode()
                 .saveProjectData();
@@ -205,6 +213,10 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
             getLog().error(this.ERROR_MESSAGE, e);
             throw new MojoExecutionException(this.ERROR_MESSAGE, e);
         }
+    }
+
+    private static void feedClassLoader(final URLClassLoader urlClassLoader) {
+        InstrumentMain.urlClassLoader = urlClassLoader;
     }
 
 }
