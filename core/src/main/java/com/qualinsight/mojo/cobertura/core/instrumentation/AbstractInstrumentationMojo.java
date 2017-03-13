@@ -175,7 +175,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
             urls.add(classesDirectoryURL);
         } catch (final MalformedURLException e) {
             getLog().error("Failed to resolve URL for classes directory " + this.classesPath, e);
-            throw new MojoExecutionException(this.ERROR_MESSAGE, e);
+            throw new MojoExecutionException(ERROR_MESSAGE, e);
         }
 
         @SuppressWarnings("unchecked")
@@ -193,7 +193,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
                         .toURL());
                 } catch (final MalformedURLException e) {
                     getLog().error("Failed to resolve URL for artifact " + artifactId, e);
-                    throw new MojoExecutionException(this.ERROR_MESSAGE, e);
+                    throw new MojoExecutionException(ERROR_MESSAGE, e);
                 }
             } else {
                 getLog().warn("No file found for artifact " + artifactId);
@@ -210,8 +210,8 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
             new Cobertura(arguments).instrumentCode()
                 .saveProjectData();
         } catch (final Throwable e) {
-            getLog().error(this.ERROR_MESSAGE, e);
-            throw new MojoExecutionException(this.ERROR_MESSAGE, e);
+            getLog().error(ERROR_MESSAGE, e);
+            throw new MojoExecutionException(ERROR_MESSAGE, e);
         }
     }
 
