@@ -170,7 +170,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
      * https://github.com/cobertura/cobertura/blob/db3bedf3334d8f35bad7ca3c6f4d777be6a09fc5/cobertura/src/main/java/net/sourceforge/cobertura/instrument/CoberturaClassWriter.java#L32
      * 
      */
-    private void patchAuxClasspath() throws MojoExecutionException {
+    private void feedAuxClasspath() throws MojoExecutionException {
         List<URL> urls = new ArrayList<URL>();
         
         // Add the classes directory
@@ -199,7 +199,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
                     throw new MojoExecutionException("An error occured during code instrumentation:", e);
                 }
             } else {
-                getLog().warn("No file fould for artifact " + artifactId);
+                getLog().warn("No file found for artifact " + artifactId);
             }
         }
         InstrumentMain.urlClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
@@ -207,7 +207,7 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
     private void processInstrumentation(final Arguments arguments) throws MojoExecutionException {
         getLog().debug("Instrumenting code with Cobertura");
-        patchAuxClasspath();
+        feedAuxClasspath();
         try {
             new Cobertura(arguments).instrumentCode()
                 .saveProjectData();
