@@ -27,7 +27,10 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+import net.sourceforge.cobertura.dsl.Arguments;
+import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
+import net.sourceforge.cobertura.dsl.Cobertura;
+import net.sourceforge.cobertura.instrument.InstrumentMain;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
@@ -37,21 +40,18 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import net.sourceforge.cobertura.dsl.Arguments;
-import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
-import net.sourceforge.cobertura.dsl.Cobertura;
-import net.sourceforge.cobertura.instrument.InstrumentMain;
-
 public abstract class AbstractInstrumentationMojo extends AbstractMojo {
 
     /**
      * Default Cobertura base data file name.
      */
     public static final String DATA_FILE_NAME = "cobertura.ser";
-    
+
+    private final String ERROR_MESSAGE = "An error occured during code instrumentation:";
+
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
-    
+
     @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
     private String projectPath;
 
@@ -154,49 +154,39 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
             throw new MojoExecutionException(message, e);
         }
     }
-    
-    /* 
-     * Cobertura needs some extra classloader handling...
-     * 
-     * Since we are not using ant and have no access to --auxClasspath 
-     * we need to patch the URL classloader in InstrumentMain.
-     * 
-     * See:
-     * https://github.com/cobertura/cobertura/wiki/FAQ#classnotfoundexception-during-instrumentation
-     * 
-     * https://github.com/cobertura/cobertura/issues/338
-     * https://github.com/cobertura/cobertura/issues/231
-     * https://github.com/cobertura/cobertura/issues/74
-     * https://github.com/cobertura/cobertura/blob/db3bedf3334d8f35bad7ca3c6f4d777be6a09fc5/cobertura/src/main/java/net/sourceforge/cobertura/instrument/CoberturaClassWriter.java#L32
-     * 
+
+    /*
+     * Cobertura needs some extra classloader handling... Since we are not using ant and have no access to --auxClasspath we need to patch the URL classloader in InstrumentMain. See: https://github.com/cobertura/cobertura/wiki/FAQ#classnotfoundexception-during-instrumentation https://github.com/cobertura/cobertura/issues/338 https://github.com/cobertura/cobertura/issues/231 https://github.com/cobertura/cobertura/issues/74 https://github.com/cobertura/cobertura/blob/db3bedf3334d8f35bad7ca3c6f4d777be6a09fc5/cobertura/src/main/java/net/sourceforge/cobertura/instrument/CoberturaClassWriter.java#L32
      */
     private void feedAuxClasspath() throws MojoExecutionException {
-        List<URL> urls = new ArrayList<URL>();
-        
+        final List<URL> urls = new ArrayList<URL>();
+
         // Add the classes directory
         try {
-            URL classesDirectoryURL = new File(this.classesPath).toURI().toURL();
+            final URL classesDirectoryURL = new File(this.classesPath).toURI()
+                .toURL();
             urls.add(classesDirectoryURL);
-        } catch (MalformedURLException e) {
-            getLog().error("Failed to resolve URL for classesDirectory " + this.classesPath, e) ;
-            throw new MojoExecutionException("An error occured during code instrumentation:", e);
+        } catch (final MalformedURLException e) {
+            getLog().error("Failed to resolve URL for classes directory " + this.classesPath, e);
+            throw new MojoExecutionException(this.ERROR_MESSAGE, e);
         }
-        
+
         @SuppressWarnings("unchecked")
-        Set<Artifact> artifacts = project.getArtifacts();
-        
+        final Set<Artifact> artifacts = this.project.getArtifacts();
+
         getLog().info("Adding " + artifacts.size() + " artifacts to auxClasspath");
-        
-        for (Artifact artifact : artifacts) {
-            String artifactId = artifact.getArtifactId();
-            File artifactFile = artifact.getFile();
+
+        for (final Artifact artifact : artifacts) {
+            final String artifactId = artifact.getArtifactId();
+            final File artifactFile = artifact.getFile();
             if (artifactFile != null) {
                 getLog().debug("Adding artifact " + artifactId + " - " + artifactFile);
                 try {
-                    urls.add(artifactFile.toURI().toURL());
-                } catch (MalformedURLException e) {
-                    getLog().error("Failed to resolve URL for artifact " + artifactId, e) ;
-                    throw new MojoExecutionException("An error occured during code instrumentation:", e);
+                    urls.add(artifactFile.toURI()
+                        .toURL());
+                } catch (final MalformedURLException e) {
+                    getLog().error("Failed to resolve URL for artifact " + artifactId, e);
+                    throw new MojoExecutionException(this.ERROR_MESSAGE, e);
                 }
             } else {
                 getLog().warn("No file found for artifact " + artifactId);
@@ -212,9 +202,8 @@ public abstract class AbstractInstrumentationMojo extends AbstractMojo {
             new Cobertura(arguments).instrumentCode()
                 .saveProjectData();
         } catch (final Throwable e) {
-            final String message = "An error occured during code instrumentation:";
-            getLog().error(message, e);
-            throw new MojoExecutionException(message, e);
+            getLog().error(this.ERROR_MESSAGE, e);
+            throw new MojoExecutionException(this.ERROR_MESSAGE, e);
         }
     }
 
