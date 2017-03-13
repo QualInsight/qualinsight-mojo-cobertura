@@ -105,8 +105,8 @@ public abstract class AbstractReportMojo extends AbstractMojo {
         getLog().debug("Converting Cobertura report to SonarQube generic test coverage report format");
         try {
             final String sourceDirectory = this.sourcesPath.substring(this.projectPath.length());
-            if (!sourceDirectory.endsWith(File.pathSeparator)) {
-                throw new MojoExecutionException("sourcesPath property must end with '" + File.pathSeparator + "' character. Stoping mojo execution.");
+            if (!sourceDirectory.endsWith(File.separator)) {
+                throw new MojoExecutionException("sourcesPath property must end with '" + File.separator + "' character. Stoping mojo execution.");
             }
             getLog().debug("XSLT SRC_DIR variable is set to: " + sourceDirectory);
             new CoberturaToSonarQubeCoverageReportConverter(sourceDirectory).withInputFile(conversionInputFile)
@@ -157,6 +157,7 @@ public abstract class AbstractReportMojo extends AbstractMojo {
             .setDataFile(dataFile.getAbsolutePath())
             .setEncoding(encoding())
             .calculateMethodComplexity(this.calculateMethodComplexity)
+            .addSources(sourcesPath, true)
             .build();
     }
 
