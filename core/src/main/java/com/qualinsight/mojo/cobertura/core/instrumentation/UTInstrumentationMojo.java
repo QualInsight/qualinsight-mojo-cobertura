@@ -21,12 +21,17 @@ package com.qualinsight.mojo.cobertura.core.instrumentation;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Mojo that instruments code to be tested by unit tests in order to be able to generate coverage report file for unit tests.
  *
  * @author Michel Pawlak
  */
-@Mojo(name = "instrument-ut", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
+@Mojo(
+    name = "instrument-ut", 
+    defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES,
+    requiresDependencyResolution = ResolutionScope.COMPILE
+)
 public class UTInstrumentationMojo extends AbstractInstrumentationMojo {
 }

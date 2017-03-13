@@ -21,13 +21,18 @@ package com.qualinsight.mojo.cobertura.core.instrumentation;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Mojo that instruments code to be tested by integration tests in order to be able to generate coverage report file for integration tests.
  *
  * @author Michel Pawlak
  */
-@Mojo(name = "instrument-it", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
+@Mojo(
+    name = "instrument-it", 
+    defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, 
+    requiresDependencyResolution = ResolutionScope.COMPILE
+)
 public class ITInstrumentationMojo extends AbstractInstrumentationMojo {
 
 }
