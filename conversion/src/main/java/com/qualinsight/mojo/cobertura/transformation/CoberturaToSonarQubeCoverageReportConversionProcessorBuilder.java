@@ -1,6 +1,6 @@
 /*
  * qualinsight-mojo-cobertura
- * Copyright (c) 2015, QualInsight
+ * Copyright (c) 2015-2017, QualInsight
  * http://www.qualinsight.com/
  *
  * This program is free software: you can redistribute it and/or
