@@ -30,6 +30,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * Abstract Mojo that checks if coverage is sufficient.
+ *
+ * @author Michel Pawlak
+ * @author pfrank13
+ */
 public abstract class AbstractCheckMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}/", required = false, readonly = true)
@@ -87,7 +93,7 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
             .toString();
     }
 
-    protected Arguments buildCheckArguments() {
+    private Arguments buildCheckArguments() {
         return new ArgumentsBuilder().setDataFile(getDataFileLocation())
             .setTotalBranchCoverageThreshold(this.projectBranchCoverageThreshold / 100)
             .setTotalLineCoverageThreshold(this.projectLineCoverageThreshold / 100)
@@ -98,6 +104,11 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
             .build();
     }
 
+    /**
+     * Locates Cobertura data file to be used to check coverage.
+     * 
+     * @return Path to the ".ser" Cobertura data file to be used
+     */
     protected abstract String getDataFileLocation();
 
 }

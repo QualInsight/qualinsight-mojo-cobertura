@@ -24,6 +24,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import com.qualinsight.mojo.cobertura.core.instrumentation.AbstractInstrumentationMojo;
 
+/**
+ * Mojo that checks if unit tests coverage is sufficient.
+ *
+ * @author Michel Pawlak
+ * @author pfrank13
+ */
 @Mojo(name = "check-ut-coverage", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class UTCoverageCheckMojo extends AbstractCheckMojo {
 
