@@ -17,19 +17,21 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core.check.branch;
+package com.qualinsight.mojo.cobertura.core.check;
 
-import net.sourceforge.cobertura.dsl.Arguments;
-import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
-import com.qualinsight.mojo.cobertura.core.check.AbstractCheckMojo;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import com.qualinsight.mojo.cobertura.core.instrumentation.AbstractInstrumentationMojo;
 
-public abstract class AbstractBranchCheckMojo extends AbstractCheckMojo {
+@Mojo(name = "check-ut-coverage", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+public class UTCoverageCheckMojo extends AbstractCheckMojo {
+
+    @Parameter(defaultValue = "${project.build.directory}/cobertura/ut/" + AbstractInstrumentationMojo.DATA_FILE_NAME, readonly = true)
+    private String utCoverageDataFileLocation;
 
     @Override
-    protected Arguments buildCheckArguments() {
-        return new ArgumentsBuilder().setDataFile(getDataFileLocation())
-            .setTotalBranchCoverageThreshold(getThreshold() / 100)
-            .build();
+    protected String getDataFileLocation() {
+        return this.utCoverageDataFileLocation;
     }
-
 }

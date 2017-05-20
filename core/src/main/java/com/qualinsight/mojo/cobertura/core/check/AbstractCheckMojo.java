@@ -21,6 +21,7 @@ package com.qualinsight.mojo.cobertura.core.check;
 
 import net.sourceforge.cobertura.check.CoverageResultEntry;
 import net.sourceforge.cobertura.dsl.Arguments;
+import net.sourceforge.cobertura.dsl.ArgumentsBuilder;
 import net.sourceforge.cobertura.dsl.Cobertura;
 import net.sourceforge.cobertura.reporting.CoverageThresholdsReport;
 import net.sourceforge.cobertura.reporting.ReportName;
@@ -35,7 +36,25 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
     private String projectPath;
 
     @Parameter(defaultValue = "0", required = false)
-    private double threshold;
+    private double classLineCoverageThreshold;
+
+    @Parameter(defaultValue = "0", required = false)
+    private double classBranchCoverageThreshold;
+
+    @Parameter(defaultValue = "0", required = false)
+    private double packageLineCoverageThreshold;
+
+    @Parameter(defaultValue = "0", required = false)
+    private double packageBranchCoverageThreshold;
+
+    @Parameter(defaultValue = "0", required = false)
+    private double projectLineCoverageThreshold;
+
+    @Parameter(defaultValue = "0", required = false)
+    private double projectBranchCoverageThreshold;
+
+    @Parameter(defaultValue = "true", required = false)
+    private boolean failOnError = true;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -43,19 +62,41 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
         cobertura.checkThresholds();
         final CoverageThresholdsReport coverageThresholdsReport = (CoverageThresholdsReport) cobertura.report()
             .getByName(ReportName.THRESHOLDS_REPORT);
+        Boolean foundError = false;
         for (final CoverageResultEntry coverageResultEntry : coverageThresholdsReport.getCoverageResultEntries()) {
             if (coverageResultEntry.isBelowExpectedCoverage()) {
-                throw new MojoFailureException(this, coverageResultEntry.getCoverageType() + " coverage is insufficient", coverageResultEntry.getCoverageType() + " for "
-                    + coverageResultEntry.getName() + " is " + coverageResultEntry.getCurrentCoverage() + " which is less than " + coverageResultEntry.getExpectedCoverage());
+                getLog().warn(buildWarningMessage(coverageResultEntry));
+                foundError = true;
             }
+        }
+        if (foundError) {
+            throw new MojoFailureException(this, "Coverage is insufficient", "One or more coverage types are below expected thresholds.");
         }
     }
 
-    public double getThreshold() {
-        return this.threshold;
+    private String buildWarningMessage(final CoverageResultEntry coverageResultEntry) {
+        final StringBuilder sb = new StringBuilder();
+        return sb.append(coverageResultEntry.getCoverageLevel())
+            .append(" ")
+            .append(coverageResultEntry.getCoverageType())
+            .append(" Coverage is below expected level! Mesured ")
+            .append(coverageResultEntry.getCurrentCoverage())
+            .append("% but should be at least: ")
+            .append(coverageResultEntry.getExpectedCoverage())
+            .append("%")
+            .toString();
     }
 
-    protected abstract Arguments buildCheckArguments();
+    protected Arguments buildCheckArguments() {
+        return new ArgumentsBuilder().setDataFile(getDataFileLocation())
+            .setTotalBranchCoverageThreshold(this.projectBranchCoverageThreshold / 100)
+            .setTotalLineCoverageThreshold(this.projectLineCoverageThreshold / 100)
+            .setClassBranchCoverageThreshold(this.classBranchCoverageThreshold / 100)
+            .setClassLineCoverageThreshold(this.classLineCoverageThreshold / 100)
+            .setPackageBranchCoverageThreshold(this.packageBranchCoverageThreshold / 100)
+            .setPackageLineCoverageThreshold(this.packageLineCoverageThreshold / 100)
+            .build();
+    }
 
     protected abstract String getDataFileLocation();
 

@@ -17,21 +17,21 @@
  * License along with this program. If not, you can retrieve a copy
  * from <http://www.gnu.org/licenses/>.
  */
-package com.qualinsight.mojo.cobertura.core.check.line;
+package com.qualinsight.mojo.cobertura.core.check;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import com.qualinsight.mojo.cobertura.core.instrumentation.AbstractInstrumentationMojo;
 
-@Mojo(name = "check-overall-line-coverage", defaultPhase = LifecyclePhase.VERIFY)
-public class OverallLineCoverageCheckMojo extends AbstractLineCheckMojo {
+@Mojo(name = "check-it-coverage", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
+public class ITCoverageCheckMojo extends AbstractCheckMojo {
 
-    @Parameter(defaultValue = "${project.build.directory}/cobertura/overall/" + AbstractInstrumentationMojo.DATA_FILE_NAME, readonly = true)
-    private String overallCoverageDataFileLocation;
+    @Parameter(defaultValue = "${project.build.directory}/cobertura/it/" + AbstractInstrumentationMojo.DATA_FILE_NAME, readonly = true)
+    private String itCoverageDataFileLocation;
 
     @Override
     protected String getDataFileLocation() {
-        return this.overallCoverageDataFileLocation;
+        return this.itCoverageDataFileLocation;
     }
 }
