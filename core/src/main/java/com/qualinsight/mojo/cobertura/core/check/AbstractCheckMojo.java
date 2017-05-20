@@ -75,7 +75,7 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
                 foundError = true;
             }
         }
-        if (foundError) {
+        if (foundError && this.failOnError) {
             throw new MojoFailureException(this, "Coverage is insufficient", "One or more coverage types are below expected thresholds.");
         }
     }
@@ -85,7 +85,7 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
         return sb.append(coverageResultEntry.getCoverageLevel())
             .append(" ")
             .append(coverageResultEntry.getCoverageType())
-            .append(" Coverage is below expected level! Mesured ")
+            .append(" Coverage is below expected threshold! Mesured ")
             .append(coverageResultEntry.getCurrentCoverage())
             .append("% but should be at least: ")
             .append(coverageResultEntry.getExpectedCoverage())
@@ -106,7 +106,7 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
 
     /**
      * Locates Cobertura data file to be used to check coverage.
-     * 
+     *
      * @return Path to the ".ser" Cobertura data file to be used
      */
     protected abstract String getDataFileLocation();
