@@ -85,10 +85,10 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
         return sb.append(coverageResultEntry.getCoverageLevel())
             .append(" ")
             .append(coverageResultEntry.getCoverageType())
-            .append(" Coverage is below expected threshold! Mesured ")
-            .append(coverageResultEntry.getCurrentCoverage())
+            .append(" Coverage is below expected threshold! Measured ")
+            .append(printableCoverage(coverageResultEntry.getCurrentCoverage()))
             .append("% but should be at least: ")
-            .append(coverageResultEntry.getExpectedCoverage())
+            .append(printableCoverage(coverageResultEntry.getExpectedCoverage()))
             .append("%")
             .toString();
     }
@@ -102,6 +102,10 @@ public abstract class AbstractCheckMojo extends AbstractMojo {
             .setPackageBranchCoverageThreshold(this.packageBranchCoverageThreshold / 100)
             .setPackageLineCoverageThreshold(this.packageLineCoverageThreshold / 100)
             .build();
+    }
+
+    private static double printableCoverage(final double coberturaPercentage) {
+        return Math.round(coberturaPercentage * 10000.0) / 100.0;
     }
 
     /**
